@@ -21,81 +21,103 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); }
-        body { background-color: var(--bg-light); color: var(--text-main); line-height: 1.5; }
+        
+        /* App Background Keren */
+        body { 
+            background: linear-gradient(120deg, #f5f7fa 0%, #c3cfe2 100%); 
+            color: var(--text-main); 
+            line-height: 1.5; 
+        }
 
-        /* Login Screen */
-        #login-screen { display: flex; height: 100vh; align-items: center; justify-content: center; background: #e8f0fe; }
-        .login-card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        .login-card h2 { color: var(--primary); margin-bottom: 10px; }
+        /* Login Screen dengan Gradien Keren */
+        #login-screen { 
+            display: flex; height: 100vh; align-items: center; justify-content: center; 
+            background: linear-gradient(135deg, #1a73e8 0%, #4facfe 100%);
+        }
+        
+        /* Efek Glassmorphism di Kotak Login */
+        .login-card { 
+            background: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(10px);
+            padding: 40px; border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            width: 100%; max-width: 400px; text-align: center; 
+        }
+        .login-card h2 { color: var(--primary); margin-bottom: 5px; }
         .login-card p { color: var(--secondary); margin-bottom: 25px; font-size: 0.9rem; }
+        .login-logo { width: 80px; height: auto; margin-bottom: 15px; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1)); }
         
         /* Layout */
         #app-screen { display: none; height: 100vh; overflow: hidden; }
         .app-container { display: flex; width: 100%; height: 100%; }
-        .sidebar { width: 260px; background: var(--bg-white); border-right: 1px solid var(--border); display: flex; flex-direction: column; transition: 0.3s; }
-        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); text-align: center; }
-        .sidebar-header h2 { color: var(--primary); font-size: 1.2rem; }
-        .sidebar-header p { font-size: 0.85rem; color: var(--secondary); }
+        .sidebar { width: 260px; background: var(--bg-white); border-right: 1px solid var(--border); display: flex; flex-direction: column; transition: 0.3s; box-shadow: 2px 0 10px rgba(0,0,0,0.05); }
+        .sidebar-header { padding: 25px 20px; border-bottom: 1px solid var(--border); text-align: center; background: #fdfdfd; }
+        .sidebar-logo { width: 60px; height: auto; margin-bottom: 10px; }
+        .sidebar-header h2 { color: var(--primary); font-size: 1.1rem; }
+        .sidebar-header p { font-size: 0.8rem; color: var(--secondary); }
         .sidebar-nav { flex: 1; overflow-y: auto; padding: 10px 0; }
         .nav-item { display: none; padding: 12px 20px; color: var(--text-main); text-decoration: none; border-left: 4px solid transparent; }
         .nav-item.visible { display: block; }
         .nav-item:hover, .nav-item.active { background: #e8f0fe; color: var(--primary); border-left-color: var(--primary); font-weight: 500; }
 
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .topbar { background: var(--bg-white); border-bottom: 1px solid var(--border); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .topbar { background: var(--bg-white); border-bottom: 1px solid var(--border); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
         .header-left { display: flex; align-items: center; }
         .btn-icon { background: none; border: none; font-size: 1.5rem; cursor: pointer; margin-right: 15px; display: none; }
         .user-info { font-weight: 600; color: var(--primary); display: flex; align-items: center; gap: 15px; }
 
-        .content-body { flex: 1; padding: 20px; overflow-y: auto; }
+        .content-body { flex: 1; padding: 25px; overflow-y: auto; }
         .page-section { display: none; animation: fadeIn 0.3s; }
         .page-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* UI Flow Supervisi */
         .flow-section { margin-bottom: 30px; }
         .flow-section h3 { margin-bottom: 15px; font-size: 1.1rem; color: var(--text-main); }
         .flow-container { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
-        .flow-card { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 20px; flex: 1; min-width: 250px; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .flow-card.locked { opacity: 0.6; background: #f8f9fa; }
+        .flow-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 20px; flex: 1; min-width: 250px; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .flow-card.locked { opacity: 0.6; background: #f8f9fa; box-shadow: none; }
         .flow-icon-top { position: absolute; right: 20px; top: 20px; font-size: 1.2rem; color: var(--secondary); }
         .flow-card h4 { margin-top: 40px; margin-bottom: 5px; font-size: 1rem; }
         .flow-card p { color: var(--secondary); font-size: 0.85rem; margin-bottom: 15px; min-height: 40px; }
         .flow-arrow { font-size: 1.5rem; color: var(--secondary); }
 
         /* General UI Elements */
-        .card { background: var(--bg-white); padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .stat-card { background: var(--bg-white); padding: 20px; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
-        .stat-card h3 { font-size: 2rem; color: var(--primary); margin-bottom: 5px; }
+        .card { background: var(--bg-white); padding: 25px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        .stat-card { background: var(--bg-white); padding: 25px; border-radius: 12px; border: 1px solid var(--border); text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .stat-card h3 { font-size: 2.5rem; color: var(--primary); margin-bottom: 5px; }
         
-        .table-responsive { overflow-x: auto; background: var(--bg-white); border: 1px solid var(--border); border-radius: 8px; }
+        .table-responsive { overflow-x: auto; background: var(--bg-white); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         .table { width: 100%; border-collapse: collapse; min-width: 700px; }
-        .table th, .table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
-        .table th { background: var(--bg-light); font-weight: 600; }
+        .table th, .table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
+        .table th { background: #f8f9fa; font-weight: 600; color: #444; }
         
-        .badge { padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+        .badge { padding: 5px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
         .bg-green { background: #ceead6; color: #0d652d; }
         .bg-yellow { background: #fef0db; color: #b06000; }
         .bg-red { background: #fad2cf; color: #a50e0e; }
 
-        .btn { padding: 8px 16px; border-radius: 6px; font-weight: 500; cursor: pointer; border: none; font-size: 0.9rem; transition: 0.2s; }
+        .btn { padding: 10px 18px; border-radius: 8px; font-weight: 500; cursor: pointer; border: none; font-size: 0.9rem; transition: 0.2s; }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
         .btn-secondary { background: var(--bg-light); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: #e2e2e2; }
         .btn-disabled { background: var(--disabled); color: #888; cursor: not-allowed; }
         
-        .input-form { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; margin-top: 5px; margin-bottom: 15px; font-size: 0.95rem; }
+        .input-form { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-top: 5px; margin-bottom: 15px; font-size: 0.95rem; background: #f9fbff; transition: 0.2s; }
+        .input-form:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
         textarea.input-form { resize: vertical; min-height: 80px; }
         .hidden { display: none !important; }
 
         /* Instrumen Observasi PM */
         .instrumen-group { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
-        .instrumen-group h3 { background: #e8f0fe; padding: 10px; border-radius: 6px; color: var(--primary); margin-bottom: 15px; }
-        .radio-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
-        .radio-group label { background: var(--bg-light); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border); cursor: pointer; font-size: 0.85rem; }
+        .instrumen-group h3 { background: #e8f0fe; padding: 12px 15px; border-radius: 8px; color: var(--primary); margin-bottom: 15px; font-size: 1.05rem; }
+        .radio-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+        .radio-group label { background: var(--bg-light); padding: 8px 15px; border-radius: 20px; border: 1px solid var(--border); cursor: pointer; font-size: 0.85rem; transition: 0.2s; }
         .radio-group input[type="radio"] { display: none; }
-        .radio-group input[type="radio"]:checked + label { background: var(--primary); color: white; border-color: var(--primary); }
+        .radio-group input[type="radio"]:checked + label { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 2px 5px rgba(26,115,232,0.3); }
+        .radio-group label:hover { background: #e2e2e2; }
 
         @media (max-width: 768px) {
             .sidebar { position: fixed; left: -260px; height: 100%; z-index: 999; }
@@ -111,13 +133,15 @@
     <!-- LOGIN SCREEN -->
     <div id="login-screen">
         <div class="login-card">
+            <!-- TAMBAHAN LOGO DI LOGIN BRO -->
+            <img src="logo.png" alt="Logo SDN 21 Sanggalea" class="login-logo">
             <h2>Portal Supervisi</h2>
             <p>UPTD SDN 21 Sanggalea</p>
             <form id="login-form">
-                <input type="text" id="login-input" class="input-form" placeholder="Masukkan NIP/NIK (Guru) atau 'admin'" required>
-                <button type="submit" class="btn btn-primary" style="width: 100%">Masuk</button>
+                <input type="text" id="login-input" class="input-form" placeholder="Masukkan NIP/NIK..." required>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 1rem;">Masuk</button>
             </form>
-            <p style="margin-top: 15px; font-size: 0.8rem; color: var(--secondary);">*Masukkan NIP/NIK yang terdaftar. Kepsek dapat menggunakan 'admin'</p>
+            <p style="margin-top: 20px; font-size: 0.75rem; color: var(--secondary);">*Gunakan NIP untuk masuk. Kepsek dapat menggunakan 'admin'</p>
         </div>
     </div>
 
@@ -127,8 +151,10 @@
             <!-- Sidebar -->
             <aside class="sidebar" id="sidebar">
                 <div class="sidebar-header">
-                    <h2>LOGO SEKOLAH</h2>
-                    <p>UPTD SDN 21 Sanggalea</p>
+                    <!-- TAMBAHAN LOGO DI SIDEBAR BRO -->
+                    <img src="logo.png" alt="Logo Sekolah" class="sidebar-logo">
+                    <h2>SDN 21 Sanggalea</h2>
+                    <p>Supervisi Akademik</p>
                 </div>
                 <nav class="sidebar-nav" id="sidebar-nav">
                     <a href="#" class="nav-item" data-role="all" data-target="dashboard">🏠 Dashboard</a>
@@ -254,7 +280,7 @@
                     <!-- Pengaturan -->
                     <section id="pengaturan" class="page-section">
                         <h2>Pengaturan Sistem</h2>
-                        <button class="btn btn-danger mt-2" onclick="resetData()">⚠️ Reset Data Demo</button>
+                        <button class="btn btn-danger mt-2" onclick="resetData()" style="background: #e53935; color: white;">⚠️ Reset Data Demo</button>
                     </section>
                 </div>
             </main>
@@ -311,7 +337,6 @@
 
         // --- INIT & FETCH DATA DARI GAS ---
         window.onload = async () => {
-            // Tampilkan status loading di tombol login saat mengambil data
             const loginBtn = document.querySelector('#login-form button');
             loginBtn.innerText = "Memuat Database...";
             loginBtn.disabled = true;
@@ -345,15 +370,12 @@
             e.preventDefault();
             const input = document.getElementById('login-input').value.trim();
             
-            // Cek Kepala Sekolah
             if (input.toLowerCase() === 'admin' || input === NIP_KEPSEK) {
                 currentUser = { role: 'kepsek', nama: 'Bapak Ariefin Arief, S.Pd.,M.Pd.,Gr' };
             } else {
-                // Cek data dari Hardcoded Array yang baru
                 const guruHardcode = dataGuruSanggalea.find(t => t.nip === input);
                 
                 if (guruHardcode) {
-                    // Cari ID asli guru tersebut dari database GAS (jika ada) agar sinkronisasinya tetap jalan
                     const guruDariGas = data.teachers.find(t => t.nama === guruHardcode.nama || t.nip === guruHardcode.nip);
                     const finalId = guruDariGas ? guruDariGas.id : guruHardcode.nip;
 
