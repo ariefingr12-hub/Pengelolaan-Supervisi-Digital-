@@ -3,92 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supervisi Akademik - UPTD SDN 21 Sanggalea</title>
+    <title>Supervisi Akademik - Sanggalea</title>
     
     <style>
         :root {
-            --primary: #1a73e8;
-            --primary-hover: #1557b0;
-            --secondary: #5f6368;
-            --bg-light: #f8f9fa;
-            --bg-white: #ffffff;
-            --border: #dadce0;
-            --text-main: #202124;
-            --success: #0f9d58;
-            --warning: #f4b400;
-            --disabled: #e0e0e0;
+            --primary: #1a73e8; --primary-hover: #1557b0; --secondary: #5f6368;
+            --bg-light: #f8f9fa; --bg-white: #ffffff; --border: #dadce0;
+            --text-main: #202124; --success: #0f9d58; --warning: #f4b400;
             --font-family: 'Segoe UI', system-ui, sans-serif;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); }
-        
-        /* App Background Keren */
-        body { 
-            background: linear-gradient(120deg, #f5f7fa 0%, #c3cfe2 100%); 
-            color: var(--text-main); 
-            line-height: 1.5; 
-        }
+        body { background: linear-gradient(120deg, #f5f7fa 0%, #c3cfe2 100%); color: var(--text-main); line-height: 1.5; }
 
-        /* Login Screen dengan Gradien Keren */
-        #login-screen { 
-            display: flex; height: 100vh; align-items: center; justify-content: center; 
-            background: linear-gradient(135deg, #1a73e8 0%, #4facfe 100%);
-        }
-        
-        /* Efek Glassmorphism di Kotak Login */
-        .login-card { 
-            background: rgba(255, 255, 255, 0.95); 
-            backdrop-filter: blur(10px);
-            padding: 40px; border-radius: 16px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
-            width: 100%; max-width: 400px; text-align: center; 
-        }
-        .login-card h2 { color: var(--primary); margin-bottom: 5px; }
+        /* Login */
+        #login-screen { display: flex; height: 100vh; align-items: center; justify-content: center; background: linear-gradient(135deg, #1a73e8 0%, #4facfe 100%); }
+        .login-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 100%; max-width: 400px; text-align: center; }
+        .login-card h2 { color: var(--primary); }
         .login-card p { color: var(--secondary); margin-bottom: 25px; font-size: 0.9rem; }
-        .login-logo { width: 80px; height: auto; margin-bottom: 15px; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1)); }
         
-        /* Layout */
+        /* Layout App */
         #app-screen { display: none; height: 100vh; overflow: hidden; }
         .app-container { display: flex; width: 100%; height: 100%; }
-        .sidebar { width: 260px; background: var(--bg-white); border-right: 1px solid var(--border); display: flex; flex-direction: column; transition: 0.3s; box-shadow: 2px 0 10px rgba(0,0,0,0.05); }
-        .sidebar-header { padding: 25px 20px; border-bottom: 1px solid var(--border); text-align: center; background: #fdfdfd; }
-        .sidebar-logo { width: 60px; height: auto; margin-bottom: 10px; }
+        .sidebar { width: 260px; background: var(--bg-white); border-right: 1px solid var(--border); display: flex; flex-direction: column; transition: 0.3s; }
+        .sidebar-header { padding: 25px 20px; border-bottom: 1px solid var(--border); text-align: center; }
         .sidebar-header h2 { color: var(--primary); font-size: 1.1rem; }
-        .sidebar-header p { font-size: 0.8rem; color: var(--secondary); }
         .sidebar-nav { flex: 1; overflow-y: auto; padding: 10px 0; }
         .nav-item { display: none; padding: 12px 20px; color: var(--text-main); text-decoration: none; border-left: 4px solid transparent; }
         .nav-item.visible { display: block; }
         .nav-item:hover, .nav-item.active { background: #e8f0fe; color: var(--primary); border-left-color: var(--primary); font-weight: 500; }
 
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .topbar { background: var(--bg-white); border-bottom: 1px solid var(--border); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .header-left { display: flex; align-items: center; }
-        .btn-icon { background: none; border: none; font-size: 1.5rem; cursor: pointer; margin-right: 15px; display: none; }
-        .user-info { font-weight: 600; color: var(--primary); display: flex; align-items: center; gap: 15px; }
-
+        .topbar { background: var(--bg-white); border-bottom: 1px solid var(--border); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
         .content-body { flex: 1; padding: 25px; overflow-y: auto; }
+        
         .page-section { display: none; animation: fadeIn 0.3s; }
         .page-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* UI Flow Supervisi */
-        .flow-section { margin-bottom: 30px; }
-        .flow-section h3 { margin-bottom: 15px; font-size: 1.1rem; color: var(--text-main); }
-        .flow-container { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
-        .flow-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 20px; flex: 1; min-width: 250px; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .flow-card.locked { opacity: 0.6; background: #f8f9fa; box-shadow: none; }
-        .flow-icon-top { position: absolute; right: 20px; top: 20px; font-size: 1.2rem; color: var(--secondary); }
-        .flow-card h4 { margin-top: 40px; margin-bottom: 5px; font-size: 1rem; }
-        .flow-card p { color: var(--secondary); font-size: 0.85rem; margin-bottom: 15px; min-height: 40px; }
-        .flow-arrow { font-size: 1.5rem; color: var(--secondary); }
-
-        /* General UI Elements */
-        .card { background: var(--bg-white); padding: 25px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        /* Komponen */
+        .card { background: var(--bg-white); padding: 25px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px; }
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
-        .stat-card { background: var(--bg-white); padding: 25px; border-radius: 12px; border: 1px solid var(--border); text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .stat-card { background: var(--bg-white); padding: 25px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
         .stat-card h3 { font-size: 2.5rem; color: var(--primary); margin-bottom: 5px; }
         
-        .table-responsive { overflow-x: auto; background: var(--bg-white); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .table-responsive { overflow-x: auto; background: var(--bg-white); border: 1px solid var(--border); border-radius: 12px; }
         .table { width: 100%; border-collapse: collapse; min-width: 700px; }
         .table th, .table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
         .table th { background: #f8f9fa; font-weight: 600; color: #444; }
@@ -100,31 +59,31 @@
 
         .btn { padding: 10px 18px; border-radius: 8px; font-weight: 500; cursor: pointer; border: none; font-size: 0.9rem; transition: 0.2s; }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        .btn-primary:hover { background: var(--primary-hover); }
         .btn-secondary { background: var(--bg-light); border: 1px solid var(--border); }
-        .btn-secondary:hover { background: #e2e2e2; }
-        .btn-disabled { background: var(--disabled); color: #888; cursor: not-allowed; }
         
-        .input-form { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-top: 5px; margin-bottom: 15px; font-size: 0.95rem; background: #f9fbff; transition: 0.2s; }
-        .input-form:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
-        textarea.input-form { resize: vertical; min-height: 80px; }
+        .input-form { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-top: 5px; margin-bottom: 15px; font-size: 0.95rem; }
+        .input-form:focus { outline: none; border-color: var(--primary); }
         .hidden { display: none !important; }
 
-        /* Instrumen Observasi PM */
+        /* Form Tambah */
+        .form-box { background: #fdfdfd; border: 1px dashed #bbb; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        
+        /* Observasi */
         .instrumen-group { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
         .instrumen-group h3 { background: #e8f0fe; padding: 12px 15px; border-radius: 8px; color: var(--primary); margin-bottom: 15px; font-size: 1.05rem; }
         .radio-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-        .radio-group label { background: var(--bg-light); padding: 8px 15px; border-radius: 20px; border: 1px solid var(--border); cursor: pointer; font-size: 0.85rem; transition: 0.2s; }
+        .radio-group label { background: var(--bg-light); padding: 8px 15px; border-radius: 20px; border: 1px solid var(--border); cursor: pointer; font-size: 0.85rem; }
         .radio-group input[type="radio"] { display: none; }
-        .radio-group input[type="radio"]:checked + label { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 2px 5px rgba(26,115,232,0.3); }
-        .radio-group label:hover { background: #e2e2e2; }
-
+        .radio-group input[type="radio"]:checked + label { background: var(--primary); color: white; border-color: var(--primary); }
+        
+        .header-left { display: flex; align-items: center; }
+        .btn-icon { background: none; border: none; font-size: 1.5rem; cursor: pointer; margin-right: 15px; display: none; }
+        
         @media (max-width: 768px) {
             .sidebar { position: fixed; left: -260px; height: 100%; z-index: 999; }
             .sidebar.open { left: 0; }
             .btn-icon { display: block; }
-            .flow-container { flex-direction: column; align-items: stretch; }
-            .flow-arrow { text-align: center; transform: rotate(90deg); margin: 5px 0; }
         }
     </style>
 </head>
@@ -133,15 +92,13 @@
     <!-- LOGIN SCREEN -->
     <div id="login-screen">
         <div class="login-card">
-            <!-- LOGO DI LOGIN -->
-            <img src="logo.png" alt="Logo SDN 21 Sanggalea" class="login-logo">
             <h2>Portal Supervisi</h2>
             <p>UPTD SDN 21 Sanggalea</p>
             <form id="login-form">
                 <input type="text" id="login-input" class="input-form" placeholder="Masukkan NIP/NIK..." required>
                 <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 1rem;">Masuk</button>
             </form>
-            <p style="margin-top: 20px; font-size: 0.75rem; color: var(--secondary);">*Gunakan NIP untuk masuk. Kepsek dapat menggunakan 'admin'</p>
+            <p style="margin-top: 20px; font-size: 0.75rem; color: var(--secondary);">*Gunakan NIP. Kepsek gunakan 'admin'</p>
         </div>
     </div>
 
@@ -151,8 +108,6 @@
             <!-- Sidebar -->
             <aside class="sidebar" id="sidebar">
                 <div class="sidebar-header">
-                    <!-- LOGO DI SIDEBAR -->
-                    <img src="logo.png" alt="Logo Sekolah" class="sidebar-logo">
                     <h2>SDN 21 Sanggalea</h2>
                     <p>Supervisi Akademik</p>
                 </div>
@@ -160,11 +115,9 @@
                     <a href="#" class="nav-item" data-role="all" data-target="dashboard">🏠 Dashboard</a>
                     <a href="#" class="nav-item" data-role="kepsek" data-target="data-guru">👨‍🏫 Data Guru</a>
                     <a href="#" class="nav-item" data-role="kepsek" data-target="jadwal">📅 Jadwal Supervisi</a>
-                    <a href="#" class="nav-item" data-role="kepsek" data-target="observasi">🔍 Pelaksanaan Supervisi</a>
-                    <a href="#" class="nav-item" data-role="guru" data-target="refleksi">📝 Refleksi Guru</a>
-                    <a href="#" class="nav-item" data-role="guru" data-target="tindak-lanjut">🔄 Tindak Lanjut</a>
+                    <a href="#" class="nav-item" data-role="kepsek" data-target="observasi">🔍 Pelaksanaan</a>
+                    <a href="#" class="nav-item" data-role="guru" data-target="refleksi">📝 Refleksi</a>
                     <a href="#" class="nav-item" data-role="all" data-target="riwayat">📊 Riwayat Hasil</a>
-                    <a href="#" class="nav-item" data-role="kepsek" data-target="pengaturan">⚙️ Pengaturan</a>
                 </nav>
             </aside>
 
@@ -175,67 +128,51 @@
                         <button id="menu-toggle" class="btn-icon">☰</button>
                         <h1>Supervisi Akademik</h1>
                     </div>
-                    <div class="user-info">
+                    <div style="font-weight: 600; color: var(--primary); display: flex; gap:15px; align-items:center;">
                         <span id="user-display-name">User</span>
                         <button class="btn btn-secondary btn-sm" onclick="logout()">Keluar</button>
                     </div>
                 </header>
 
                 <div class="content-body">
+                    
                     <!-- Dashboard -->
                     <section id="dashboard" class="page-section active">
                         <div id="dashboard-kepsek" style="display: none;">
                             <h2>Dashboard Kepala Sekolah</h2>
                             <div class="stats-grid" id="dashboard-stats"></div>
                         </div>
-                        
-                        <div id="dashboard-guru" style="display: none;">
-                            <h2>Alur Proses Supervisi Akademik</h2>
-                            <p style="margin-bottom: 20px; color: var(--secondary);">Pantau progres supervisi dan tindak lanjut Anda di sini.</p>
-                            
-                            <div class="flow-section">
-                                <h3>Bagian 1: Pelaksanaan Supervisi Akademik</h3>
-                                <div class="flow-container">
-                                    <div class="flow-card">
-                                        <div class="flow-icon-top">🔓</div>
-                                        <h4>Pemantauan Kinerja: Isi Hasil Observasi Praktik Kinerja</h4>
-                                        <p>Dilaksanakan oleh Kepala Sekolah sesuai jadwal.</p>
-                                        <button class="btn btn-secondary" onclick="navigate('riwayat')">Lihat Hasil</button>
-                                    </div>
-                                    <div class="flow-arrow">→</div>
-                                    <div class="flow-card locked" id="card-rtl">
-                                        <div class="flow-icon-top">🔒</div>
-                                        <h4>Pembinaan Kinerja: Isi Penilaian Rencana Tindak Lanjut</h4>
-                                        <p>Diskusikan bersama Kepala Sekolah.</p>
-                                        <button class="btn btn-disabled">Lakukan</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="flow-section">
-                                <h3>Bagian 2: Pelaksanaan Tindak Lanjut</h3>
-                                <div class="flow-container">
-                                    <div class="flow-card locked">
-                                        <div class="flow-icon-top">🔒</div>
-                                        <h4>Pembinaan Kinerja: Cek Pelaksanaan Tindak Lanjut</h4>
-                                        <p>Laksanakan pilihan belajar / tindak lanjut.</p>
-                                        <button class="btn btn-disabled">Lakukan</button>
-                                    </div>
-                                    <div class="flow-arrow">→</div>
-                                    <div class="flow-card locked" id="card-refleksi">
-                                        <div class="flow-icon-top">🔒</div>
-                                        <h4>Pembinaan Kinerja: Isi Refleksi & Evaluasi Tindak Lanjut</h4>
-                                        <p>Lakukan refleksi mandiri setelah observasi.</p>
-                                        <button class="btn btn-primary hidden" id="btn-isi-refleksi" onclick="navigate('refleksi')">Lakukan Refleksi</button>
-                                    </div>
-                                </div>
-                            </div>
+                        <div id="dashboard-guru" style="display: none;" class="card">
+                            <h2>Selamat Datang, Guru!</h2>
+                            <p>Pantau jadwal dan lakukan refleksi pasca-observasi melalui menu di samping.</p>
                         </div>
                     </section>
 
-                    <!-- Data Guru (Kepsek Only) -->
+                    <!-- Data Guru (Bisa Tambah Data Langsung) -->
                     <section id="data-guru" class="page-section">
-                        <h2>Data Guru</h2>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h2>Manajemen Data Guru</h2>
+                            <button class="btn btn-primary" onclick="toggleForm('form-tambah-guru')">+ Tambah Guru</button>
+                        </div>
+                        
+                        <!-- Form Tambah Guru -->
+                        <div id="form-tambah-guru" class="form-box hidden mt-2">
+                            <h3>Form Tambah Guru Baru</h3>
+                            <form id="form-add-teacher">
+                                <label>Nama Lengkap (Beserta Gelar):</label>
+                                <input type="text" id="add-nama" class="input-form" required>
+                                
+                                <label>NIP / NIK (Digunakan untuk Login):</label>
+                                <input type="number" id="add-nip" class="input-form" required>
+                                
+                                <label>Mata Pelajaran / Kelas:</label>
+                                <input type="text" id="add-mapel" class="input-form" required>
+                                
+                                <button type="submit" class="btn btn-primary" id="btn-save-teacher">Simpan Data Guru</button>
+                                <button type="button" class="btn btn-secondary" onclick="toggleForm('form-tambah-guru')">Batal</button>
+                            </form>
+                        </div>
+
                         <div class="table-responsive mt-2">
                             <table class="table" id="table-guru">
                                 <thead><tr><th>Nama Guru</th><th>NIP/NIK</th><th>Mapel</th><th>Status</th></tr></thead>
@@ -244,410 +181,296 @@
                         </div>
                     </section>
 
-                    <!-- Jadwal Supervisi (Kepsek Only) -->
+                    <!-- Jadwal Supervisi (Bisa Tambah Jadwal) -->
                     <section id="jadwal" class="page-section">
-                        <h2>Jadwal Supervisi Akademik</h2>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h2>Jadwal Supervisi Akademik</h2>
+                            <button class="btn btn-primary" onclick="toggleForm('form-tambah-jadwal')">+ Tambah Jadwal</button>
+                        </div>
+
+                        <!-- Form Tambah Jadwal -->
+                        <div id="form-tambah-jadwal" class="form-box hidden mt-2">
+                            <h3>Form Buat Jadwal Supervisi</h3>
+                            <form id="form-add-schedule">
+                                <label>Pilih Guru:</label>
+                                <select id="add-sched-guru" class="input-form" required></select>
+                                
+                                <label>Tanggal Pelaksanaan (Contoh: 25 Agustus 2026):</label>
+                                <input type="text" id="add-sched-tgl" class="input-form" required>
+                                
+                                <button type="submit" class="btn btn-primary" id="btn-save-schedule">Simpan Jadwal</button>
+                                <button type="button" class="btn btn-secondary" onclick="toggleForm('form-tambah-jadwal')">Batal</button>
+                            </form>
+                        </div>
+
                         <div class="card mt-2">
-                            <p style="color: var(--secondary); font-size: 0.9rem; margin-bottom: 15px;">
-                                🗓️ Data jadwal di bawah ini ditarik langsung dari database <b>Google Sheets</b>.
-                            </p>
                             <div class="table-responsive">
                                 <table class="table" id="table-jadwal">
-                                    <thead>
-                                        <tr>
-                                            <th>Nama Guru</th>
-                                            <th>Tanggal Pelaksanaan</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
+                                    <thead><tr><th>Nama Guru</th><th>Tanggal Pelaksanaan</th><th>Status</th></tr></thead>
                                     <tbody></tbody>
                                 </table>
                             </div>
                         </div>
                     </section>
 
-                    <!-- Observasi (Kepsek Only) -->
+                    <!-- Observasi -->
                     <section id="observasi" class="page-section">
-                        <h2>Pelaksanaan Supervisi Akademik (Observasi)</h2>
+                        <h2>Pelaksanaan Observasi</h2>
                         <div class="card mt-2">
                             <label>Pilih Jadwal Guru:</label>
                             <select id="select-jadwal-observasi" class="input-form"></select>
-                            <button class="btn btn-primary" onclick="mulaiObservasi()">Mulai Observasi</button>
+                            <button class="btn btn-primary" onclick="mulaiObservasi()">Mulai Penilaian</button>
                         </div>
-                        <div id="form-observasi-container" class="hidden">
+                        <div id="form-observasi-container" class="hidden card">
                             <form id="form-instrumen-observasi"></form>
                         </div>
                     </section>
 
-                    <!-- Refleksi (Guru Only) -->
+                    <!-- Refleksi -->
                     <section id="refleksi" class="page-section">
                         <h2>Refleksi Guru</h2>
                         <div id="refleksi-container" class="card mt-2"></div>
                     </section>
 
-                    <!-- Tindak Lanjut (Guru Only) -->
-                    <section id="tindak-lanjut" class="page-section">
-                        <h2>Tindak Lanjut Supervisi</h2>
-                        <div class="card mt-2" id="tindak-lanjut-container">
-                            <p>Fitur pengembangan tindak lanjut (RTL) akan dirilis di fase berikutnya.</p>
-                        </div>
-                    </section>
-
-                    <!-- Riwayat (All) -->
+                    <!-- Riwayat -->
                     <section id="riwayat" class="page-section">
                         <h2>Riwayat Hasil Supervisi</h2>
                         <div id="riwayat-container" class="mt-2"></div>
-                    </section>
-                    
-                    <!-- Pengaturan -->
-                    <section id="pengaturan" class="page-section">
-                        <h2>Pengaturan Sistem</h2>
-                        <button class="btn btn-danger mt-2" onclick="resetData()" style="background: #e53935; color: white;">⚠️ Reset Data Demo</button>
                     </section>
                 </div>
             </main>
         </div>
     </div>
 
+    <!-- SCRIPT LOGIKA UTAMA -->
     <script>
-        // --- DATA & STATE ---
-        let data = { teachers: [], schedules: [], observations: [], reflections: [], followUps: [] };
+        // --- DATA STATE ---
+        let data = { teachers: [], schedules: [], observations: [], reflections: [] };
         let currentUser = null; 
 
-        // ==========================================
-        // URL WEB APP GAS
-        // ==========================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxdNpJjt52sFPE18cjwIU57PLmuFwuFJ4MQ7nfdvEknSVQJzidUwj_2_OT1gXTHSph1/exec'; 
-
-        // ==========================================
-        // DATABASE GURU MANUAL (HARDCODED UNTUK LOGIN)
-        // ==========================================
-        const NIP_KEPSEK = "198912212015041001"; // NIP Kepala Sekolah
-        const dataGuruSanggalea = [
-            { nama: "RAHMIAH, S.Pd, M.M", nip: "197609131999032007" },
-            { nama: "RAMLAH, S.Pd", nip: "197008281989092001" },
-            { nama: "HJ.SRI RAHAYU, S.Pd", nip: "197004271992032004" },
-            { nama: "RAHMANIAR, S.Pd", nip: "197202211995052001" },
-            { nama: "HJ. A. ANGKE, S.Pd", nip: "197101111994052001" },
-            { nama: "WARDA, S.Pd", nip: "197304032005022004" },
-            { nama: "WAHYUNI PUTRI, S.Pd", nip: "198612122011012017" },
-            { nama: "MUSTAGFIRAH, S.Pd", nip: "198812202011012013" },
-            { nama: "EMMY HAFSAH, S.Pd", nip: "198509192010012035" },
-            { nama: "A. MUTMAINNAH, S.Pd.,M.Pd", nip: "198412142015012001" },
-            { nama: "MIRAYAH HAMID, S.Pd.I", nip: "198404172019032005" },
-            { nama: "KHAERUL AKBAR, S.Pd", nip: "198911292019031006" },
-            { nama: "RIDZKY AL INSYIRAH, S.Pd", nip: "199105182020121016" },
-            { nama: "NURBAITI, S.Pd.I", nip: "199108072020122005" },
-            { nama: "ASMAWAHIDA, S.Pd", nip: "197506082022212015" },
-            { nama: "NIRMALA SARI, S.Pd.I", nip: "198803172024212009" },
-            { nama: "SRI ASTUTI, S.Pd", nip: "199706182024212024" },
-            { nama: "ZAKIAH FIKRIAH, S.Pd", nip: "199712012024212027" },
-            { nama: "JUSLINDAYANI AS. S.Pd", nip: "198801092025212154" },
-            { nama: "ANDI TENRI SHANNAH, S.Pd", nip: "2121" },
-            { nama: "FITRA DEWI, S.Pd", nip: "199005232025212119" },
-            { nama: "ANDI CHAERANA, S.Pd", nip: "2121" }
-        ];
-
-        // Paradigma Pembelajaran Mendalam
+        // Instrumen PM
         const INSTRUMEN_PM = {
-            DIMENSI: { title: "1. DIMENSI PROFIL LULUSAN", items: ["Siswa menunjukkan Keimanan, Ketakwaan, serta kesadaran akan Kesehatan dan Kewargaan.", "Siswa menunjukkan Penalaran Kritis dan Kreativitas dalam proses belajar.", "Siswa mampu berkolaborasi, berkomunikasi dengan baik, dan menunjukkan Kemandirian."] },
-            PRINSIP: { title: "2. PRINSIP PEMBELAJARAN", items: ["Guru merancang pembelajaran yang BERMAKNA dan relevan dengan konteks nyata.", "Guru menciptakan suasana belajar yang MENGGEMBIRAKAN dan memotivasi siswa.", "Guru mendorong siswa untuk belajar dengan BERKESADARAN (fokus/mindful)."] },
-            PENGALAMAN: { title: "3. PENGALAMAN BELAJAR", items: ["Guru memfasilitasi aktivitas untuk MEMAHAMI materi secara mendalam.", "Guru memberikan kesempatan bagi siswa untuk MENGAPLIKASI pengetahuan ke dalam karya/tindakan.", "Guru membimbing siswa untuk MEREFLEKSI proses dan hasil belajarnya."] },
-            KERANGKA: { title: "4. KERANGKA PEMBELAJARAN", items: ["Guru menerapkan PRAKTIK PEDAGOGIS yang tepat sasaran dan berpusat pada siswa.", "Guru mengelola LINGKUNGAN PEMBELAJARAN yang aman, inklusif, dan mendukung.", "Guru melakukan PEMANFAATAN DIGITAL (teknologi) secara efektif untuk pembelajaran.", "Guru membangun KEMITRAAN PEMBELAJARAN (melibatkan orang tua/komunitas atau interaksi kuat antar siswa)."] }
+            DIMENSI: { title: "1. DIMENSI PROFIL LULUSAN", items: ["Siswa menunjukkan Keimanan dan Kewargaan.", "Siswa menunjukkan Penalaran Kritis.", "Siswa mampu berkolaborasi."] },
+            PRINSIP: { title: "2. PRINSIP PEMBELAJARAN", items: ["Pembelajaran BERMAKNA dan relevan.", "Suasana belajar MENGGEMBIRAKAN.", "Belajar dengan BERKESADARAN."] },
+            PENGALAMAN: { title: "3. PENGALAMAN BELAJAR", items: ["Aktivitas MEMAHAMI materi.", "MENGAPLIKASI pengetahuan.", "MEREFLEKSI hasil belajar."] },
+            KERANGKA: { title: "4. KERANGKA PEMBELAJARAN", items: ["PRAKTIK PEDAGOGIS berpusat pada siswa.", "LINGKUNGAN PEMBELAJARAN inklusif.", "PEMANFAATAN DIGITAL efektif.", "Membangun KEMITRAAN PEMBELAJARAN."] }
         };
-        const maxScorePM = Object.values(INSTRUMEN_PM).reduce((acc, curr) => acc + curr.items.length, 0) * 4;
 
-        // --- INIT & FETCH DATA DARI GAS ---
-        window.onload = async () => {
-            const loginBtn = document.querySelector('#login-form button');
-            loginBtn.innerText = "Memuat Database...";
-            loginBtn.disabled = true;
-
-            await loadDataFromGAS();
+        // --- INIT ---
+        window.onload = () => {
+            const btn = document.querySelector('#login-form button');
+            btn.innerText = "Memuat Database..."; btn.disabled = true;
             
-            loginBtn.innerText = "Masuk";
-            loginBtn.disabled = false;
-
-            const savedSession = sessionStorage.getItem('supervisi_session');
-            if (savedSession) {
-                currentUser = JSON.parse(savedSession);
-                showApp();
-            }
+            // Panggil fungsi getAppData di GAS
+            google.script.run.withSuccessHandler(res => {
+                data = res;
+                console.log("Database Dimuat:", data);
+                btn.innerText = "Masuk"; btn.disabled = false;
+                
+                // Auto login jika ada session
+                const saved = sessionStorage.getItem('sesi_supervisi');
+                if (saved) { currentUser = JSON.parse(saved); showApp(); }
+            }).getAppData();
         };
 
-        async function loadDataFromGAS() {
-            try {
-                const response = await fetch(SCRIPT_URL);
-                const result = await response.json();
-                data = result;
-                console.log("Data berhasil dimuat dari Google Sheets:", data);
-            } catch (error) {
-                console.error("Gagal memuat data:", error);
-                alert("Gagal terhubung ke Database. Pastikan URL GAS benar dan ada koneksi internet.");
-            }
-        }
-
-        // --- AUTHENTICATION ---
+        // --- AUTH ---
         document.getElementById('login-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const input = document.getElementById('login-input').value.trim();
             
-            if (input.toLowerCase() === 'admin' || input === NIP_KEPSEK) {
-                currentUser = { role: 'kepsek', nama: 'Bapak Ariefin Arief, S.Pd.,M.Pd.,Gr' };
+            if (input === 'admin') {
+                currentUser = { role: 'kepsek', nama: 'Kepala Sekolah' };
             } else {
-                const guruHardcode = dataGuruSanggalea.find(t => t.nip === input);
-                
-                if (guruHardcode) {
-                    const guruDariGas = data.teachers.find(t => t.nama === guruHardcode.nama || t.nip === guruHardcode.nip);
-                    const finalId = guruDariGas ? guruDariGas.id : guruHardcode.nip;
-
-                    currentUser = { role: 'guru', id: finalId, nama: guruHardcode.nama };
+                // Cek NIP langsung dari data Database terbaru!
+                const guru = data.teachers.find(t => t.nip == input);
+                if (guru) {
+                    currentUser = { role: 'guru', id: guru.id, nama: guru.nama };
                 } else {
-                    alert('NIP/NIK tidak ditemukan di sistem. Silakan periksa kembali!'); 
-                    return;
+                    return alert('NIP tidak ditemukan! Minta Kepala Sekolah menambahkan data Anda.');
                 }
             }
-            sessionStorage.setItem('supervisi_session', JSON.stringify(currentUser));
+            sessionStorage.setItem('sesi_supervisi', JSON.stringify(currentUser));
             showApp();
         });
 
-        function logout() {
-            sessionStorage.removeItem('supervisi_session');
-            currentUser = null;
-            document.getElementById('app-screen').style.display = 'none';
-            document.getElementById('login-screen').style.display = 'flex';
-            document.getElementById('login-input').value = '';
-        }
+        function logout() { sessionStorage.removeItem('sesi_supervisi'); location.reload(); }
 
+        // --- UI ROUTING ---
         function showApp() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app-screen').style.display = 'block';
             document.getElementById('user-display-name').innerText = currentUser.nama;
             
             document.querySelectorAll('.nav-item').forEach(el => {
-                const r = el.dataset.role;
-                if (r === 'all' || r === currentUser.role) { el.classList.add('visible'); } 
-                else { el.classList.remove('visible'); }
+                if (el.dataset.role === 'all' || el.dataset.role === currentUser.role) {
+                    el.classList.add('visible');
+                } else {
+                    el.classList.remove('visible');
+                }
             });
-            
             setupNavigation();
-            navigate('dashboard');
-            renderData();
+            document.querySelector('.nav-item.visible').click(); // Auto click menu pertama
+            renderUI();
         }
 
-        // --- NAVIGATION ---
         function setupNavigation() {
             document.querySelectorAll('.nav-item.visible').forEach(link => {
                 link.onclick = (e) => {
                     e.preventDefault();
-                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-                    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+                    document.querySelectorAll('.nav-item, .page-section').forEach(n => n.classList.remove('active', 'active'));
                     link.classList.add('active');
                     document.getElementById(link.dataset.target).classList.add('active');
-                    if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+                    document.getElementById('sidebar').classList.remove('open'); // Tutup sidebar di HP
                 };
             });
             document.getElementById('menu-toggle').onclick = () => document.getElementById('sidebar').classList.toggle('open');
         }
-        function navigate(target) { document.querySelector(`.nav-item[data-target="${target}"]`).click(); }
 
         // --- RENDER LOGIC ---
-        function renderData() {
+        function renderUI() {
             if (currentUser.role === 'kepsek') {
                 document.getElementById('dashboard-kepsek').style.display = 'block';
-                document.getElementById('dashboard-guru').style.display = 'none';
                 renderDashboardKepsek();
                 renderGuruList();
-                renderJadwalKepsek(); // Panggil fungsi render jadwal
+                renderJadwalKepsek();
                 setupObservasiSelect();
-                renderRiwayatAll();
             } else {
-                document.getElementById('dashboard-kepsek').style.display = 'none';
                 document.getElementById('dashboard-guru').style.display = 'block';
-                checkGuruFlowStatus();
                 renderRefleksiGuru();
-                renderRiwayatPersonal();
             }
+            renderRiwayatAll();
         }
 
-        // --- GURU SPECIFIC VIEWS ---
-        function checkGuruFlowStatus() {
-            const obs = data.observations.find(o => o.guruId === currentUser.id);
-            const rtlCard = document.getElementById('card-rtl');
-            const refCard = document.getElementById('card-refleksi');
-            const btnRef = document.getElementById('btn-isi-refleksi');
+        function toggleForm(id) { document.getElementById(id).classList.toggle('hidden'); }
 
-            if (obs) {
-                refCard.classList.remove('locked');
-                refCard.querySelector('.flow-icon-top').innerText = '🔓';
-                btnRef.classList.remove('hidden');
-                
-                const ref = data.reflections.find(r => r.guruId === currentUser.id);
-                if(ref) {
-                    btnRef.innerText = 'Lihat Refleksi';
-                    rtlCard.classList.remove('locked');
-                    rtlCard.querySelector('.flow-icon-top').innerText = '🔓';
-                    rtlCard.querySelector('button').classList.replace('btn-disabled', 'btn-primary');
-                    rtlCard.querySelector('button').innerText = 'Isi RTL';
-                    rtlCard.querySelector('button').onclick = () => navigate('tindak-lanjut');
-                }
-            }
-        }
-
-        function renderRefleksiGuru() {
-            const container = document.getElementById('refleksi-container');
-            const obs = data.observations.find(o => o.guruId === currentUser.id);
-            
-            if (!obs) {
-                container.innerHTML = `<p>Anda belum disupervisi. Instrumen refleksi akan terbuka setelah Kepala Sekolah melakukan observasi.</p>`;
-                return;
-            }
-
-            const ref = data.reflections.find(r => r.guruId === currentUser.id);
-            if (ref) {
-                container.innerHTML = `
-                    <h3>Hasil Refleksi Anda</h3>
-                    <p><strong>Hal yang berjalan baik:</strong><br>${ref.q1}</p><br>
-                    <p><strong>Tantangan:</strong><br>${ref.q2}</p><br>
-                    <p><strong>Rencana Perbaikan:</strong><br>${ref.q3}</p>
-                `;
-            } else {
-                container.innerHTML = `
-                    <form id="form-refleksi-guru">
-                        <label>1. Apa yang menurut Anda berjalan baik terkait penerapan Pembelajaran Mendalam hari ini?</label>
-                        <textarea class="input-form" id="ref-1" required></textarea>
-                        <label>2. Bagian mana yang masih menjadi tantangan?</label>
-                        <textarea class="input-form" id="ref-2" required></textarea>
-                        <label>3. Apa yang ingin Anda perbaiki pada pembelajaran berikutnya?</label>
-                        <textarea class="input-form" id="ref-3" required></textarea>
-                        <button type="submit" class="btn btn-primary" id="btn-submit-refleksi">Simpan Refleksi</button>
-                    </form>
-                `;
-                document.getElementById('form-refleksi-guru').onsubmit = async (e) => {
-                    e.preventDefault();
-                    const btn = document.getElementById('btn-submit-refleksi');
-                    btn.innerText = 'Menyimpan...'; btn.disabled = true;
-
-                    const payload = {
-                        id: 'R' + Date.now(), guruId: currentUser.id,
-                        q1: document.getElementById('ref-1').value,
-                        q2: document.getElementById('ref-2').value,
-                        q3: document.getElementById('ref-3').value
-                    };
-
-                    try {
-                        await fetch(SCRIPT_URL, {
-                            method: 'POST',
-                            body: JSON.stringify({ action: 'saveReflection', data: payload })
-                        });
-                        data.reflections.push(payload); // Update UI lokal
-                        alert('Refleksi berhasil disimpan ke Database!');
-                        renderData();
-                    } catch(err) {
-                        alert('Gagal menyimpan! Periksa koneksi internet.');
-                        btn.innerText = 'Simpan Refleksi'; btn.disabled = false;
-                    }
-                };
-            }
-        }
-
-        // --- KEPSEK SPECIFIC VIEWS ---
+        // --- MANAJEMEN GURU (KEPSEK) ---
         function renderDashboardKepsek() {
-            const tot = data.teachers.length;
-            const sdh = data.teachers.filter(t => t.status === 'Sudah').length;
             document.getElementById('dashboard-stats').innerHTML = `
-                <div class="stat-card"><h3>${tot}</h3><p>Total Guru</p></div>
-                <div class="stat-card"><h3>${sdh}</h3><p>Selesai Observasi</p></div>
+                <div class="stat-card"><h3>${data.teachers.length}</h3><p>Total Guru</p></div>
+                <div class="stat-card"><h3>${data.teachers.filter(t => t.status === 'Sudah').length}</h3><p>Selesai Supervisi</p></div>
             `;
         }
-        
+
         function renderGuruList() {
             const tbody = document.querySelector('#table-guru tbody');
+            const selectSched = document.getElementById('add-sched-guru');
+            
             if (data.teachers.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Belum ada data guru di Database.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4">Belum ada data guru.</td></tr>';
+                selectSched.innerHTML = '<option value="">Kosong</option>';
                 return;
             }
+
             tbody.innerHTML = data.teachers.map(t => `
                 <tr><td>${t.nama}</td><td>${t.nip}</td><td>${t.mapel}</td>
-                <td><span class="badge ${t.status==='Sudah'?'bg-green':'bg-red'}">${t.status}</span></td></tr>
+                <td><span class="badge ${t.status==='Sudah'?'bg-green':'bg-red'}">${t.status||'Belum'}</span></td></tr>
             `).join('');
+
+            selectSched.innerHTML = data.teachers.map(t => `<option value="${t.id}">${t.nama}</option>`).join('');
         }
 
+        // SUBMIT TAMBAH GURU
+        document.getElementById('form-add-teacher').onsubmit = (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save-teacher');
+            btn.innerText = 'Menyimpan...'; btn.disabled = true;
+
+            const payload = {
+                id: 'G' + Date.now(),
+                nama: document.getElementById('add-nama').value,
+                nip: document.getElementById('add-nip').value,
+                mapel: document.getElementById('add-mapel').value
+            };
+
+            google.script.run.withSuccessHandler(res => {
+                data = res; // Update data lokal dari server
+                alert("Data guru berhasil ditambahkan!");
+                document.getElementById('form-add-teacher').reset();
+                toggleForm('form-tambah-guru');
+                renderUI();
+                btn.innerText = 'Simpan Data Guru'; btn.disabled = false;
+            }).addTeacher(payload);
+        };
+
+        // --- MANAJEMEN JADWAL (KEPSEK) ---
         function renderJadwalKepsek() {
             const tbody = document.querySelector('#table-jadwal tbody');
-            
-            if (!data.schedules || data.schedules.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Belum ada jadwal di Google Sheets.</td></tr>';
+            if (data.schedules.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3">Belum ada jadwal.</td></tr>';
                 return;
             }
-
             tbody.innerHTML = data.schedules.map(s => {
                 const t = data.teachers.find(x => x.id == s.guruId);
-                const namaGuru = t ? t.nama : 'ID Guru Tidak Valid';
-                
-                let badgeColor = 'bg-yellow'; 
-                if (s.status === 'Selesai' || s.status === 'Sudah') badgeColor = 'bg-green';
-                
-                return `
-                    <tr>
-                        <td><strong>${namaGuru}</strong></td>
-                        <td>${s.tanggal}</td>
-                        <td><span class="badge ${badgeColor}">${s.status || 'Terjadwal'}</span></td>
-                    </tr>
-                `;
+                return `<tr><td><strong>${t?t.nama:'?'}</strong></td><td>${s.tanggal}</td>
+                <td><span class="badge ${s.status==='Selesai'?'bg-green':'bg-yellow'}">${s.status||'Terjadwal'}</span></td></tr>`;
             }).join('');
         }
 
+        // SUBMIT TAMBAH JADWAL
+        document.getElementById('form-add-schedule').onsubmit = (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save-schedule');
+            btn.innerText = 'Menyimpan...'; btn.disabled = true;
+
+            const payload = {
+                id: 'J' + Date.now(),
+                guruId: document.getElementById('add-sched-guru').value,
+                tanggal: document.getElementById('add-sched-tgl').value
+            };
+
+            google.script.run.withSuccessHandler(res => {
+                data = res; 
+                alert("Jadwal berhasil dibuat!");
+                document.getElementById('form-add-schedule').reset();
+                toggleForm('form-tambah-jadwal');
+                renderUI();
+                btn.innerText = 'Simpan Jadwal'; btn.disabled = false;
+            }).addSchedule(payload);
+        };
+
+        // --- OBSERVASI ---
         function setupObservasiSelect() {
             const sel = document.getElementById('select-jadwal-observasi');
-            const jadwalTersedia = data.schedules.filter(s => s.status === 'Terjadwal' || !s.status);
-            
-            if (jadwalTersedia.length === 0) {
-                sel.innerHTML = '<option value="">Tidak ada jadwal tersedia</option>';
-            } else {
-                sel.innerHTML = jadwalTersedia.map(s => {
-                    const t = data.teachers.find(x => x.id == s.guruId);
-                    return t ? `<option value="${s.id}">${t.nama} - ${s.tanggal}</option>` : '';
-                }).join('');
-            }
+            const available = data.schedules.filter(s => s.status !== 'Selesai');
+            sel.innerHTML = available.length ? available.map(s => {
+                const t = data.teachers.find(x => x.id == s.guruId);
+                return `<option value="${s.id}">${t?t.nama:'?'} - ${s.tanggal}</option>`;
+            }).join('') : '<option value="">Tidak ada jadwal aktif</option>';
         }
 
         function mulaiObservasi() {
             const schedId = document.getElementById('select-jadwal-observasi').value;
-            if(!schedId) return alert("Pilih jadwal terlebih dahulu!");
+            if(!schedId) return alert("Pilih jadwal dulu!");
             
             const sched = data.schedules.find(s => s.id == schedId);
             const t = data.teachers.find(x => x.id == sched.guruId);
             
             document.getElementById('form-observasi-container').classList.remove('hidden');
-            let html = `<h3>Instrumen Observasi: ${t.nama}</h3>
-                        <p class="mb-2 text-secondary">Paradigma: Pendekatan Pembelajaran Mendalam</p>`;
-            let i = 0;
+            const form = document.getElementById('form-instrumen-observasi');
             
+            let html = `<h3>Form Observasi: ${t.nama}</h3>`;
+            let i = 0;
             for (const [key, section] of Object.entries(INSTRUMEN_PM)) {
                 html += `<div class="instrumen-group"><h4>${section.title}</h4>`;
                 section.items.forEach(item => {
                     html += `<div style="margin: 10px 0;"><p>${item}</p><div class="radio-group">`;
                     ['Belum Terlihat', 'Mulai Terlihat', 'Sering Terlihat', 'Konsisten'].forEach((val, idx) => {
-                        const v = idx + 1;
-                        html += `<input type="radio" name="ind_${i}" id="ind_${i}_${v}" value="${v}" required><label for="ind_${i}_${v}">${val}</label>`;
+                        html += `<input type="radio" name="ind_${i}" id="ind_${i}_${idx+1}" value="${idx+1}" required><label for="ind_${i}_${idx+1}">${val}</label>`;
                     });
-                    html += `</div></div>`;
-                    i++;
+                    html += `</div></div>`; i++;
                 });
                 html += `</div>`;
             }
-            html += `<label>Catatan Temuan Kekuatan:</label><textarea id="obs-kuat" class="input-form" required></textarea>
-                     <label>Catatan Area Pengembangan:</label><textarea id="obs-area" class="input-form" required></textarea>
-                     <button type="submit" class="btn btn-primary" id="btn-submit-obs">Simpan Hasil Observasi</button>`;
+            html += `<label>Catatan Kekuatan:</label><textarea id="obs-kuat" class="input-form" required></textarea>
+                     <label>Area Pengembangan:</label><textarea id="obs-area" class="input-form" required></textarea>
+                     <button type="submit" class="btn btn-primary" id="btn-save-obs">Simpan Observasi</button>`;
             
-            const form = document.getElementById('form-instrumen-observasi');
             form.innerHTML = html;
             
-            form.onsubmit = async (e) => {
+            form.onsubmit = (e) => {
                 e.preventDefault();
-                const btn = document.getElementById('btn-submit-obs');
-                btn.innerText = 'Menyimpan...'; btn.disabled = true;
+                document.getElementById('btn-save-obs').innerText = 'Menyimpan...'; 
+                document.getElementById('btn-save-obs').disabled = true;
 
                 let score = 0;
                 document.querySelectorAll('input[type="radio"]:checked').forEach(el => score += parseInt(el.value));
@@ -658,57 +481,73 @@
                     area: document.getElementById('obs-area').value
                 };
                 
-                try {
-                    // Kirim ke GAS
-                    await fetch(SCRIPT_URL, {
-                        method: 'POST',
-                        body: JSON.stringify({ action: 'saveObservation', data: payload })
-                    });
-                    
-                    // Update State Lokal
-                    data.observations.push(payload);
-                    sched.status = 'Selesai';
-                    t.status = 'Sudah';
-                    
-                    alert("Observasi berhasil disimpan di Database!");
+                google.script.run.withSuccessHandler(res => {
+                    data = res;
+                    alert("Observasi Selesai!");
                     document.getElementById('form-observasi-container').classList.add('hidden');
-                    renderData();
-                } catch(err) {
-                    alert('Gagal menyimpan observasi! Periksa koneksi internet.');
-                    btn.innerText = 'Simpan Hasil Observasi'; btn.disabled = false;
-                }
+                    renderUI();
+                }).saveObservation(payload);
             };
+        }
+
+        // --- REFLEKSI GURU ---
+        function renderRefleksiGuru() {
+            const container = document.getElementById('refleksi-container');
+            const obs = data.observations.find(o => o.guruId == currentUser.id);
+            const ref = data.reflections.find(r => r.guruId == currentUser.id);
+
+            if (!obs) {
+                container.innerHTML = `<p>Menunggu Kepala Sekolah melakukan observasi.</p>`;
+            } else if (ref) {
+                container.innerHTML = `
+                    <div style="background:#e8f0fe; padding:15px; border-radius:8px;">
+                        <p><strong>Hal yang berjalan baik:</strong><br>${ref.q1}</p><br>
+                        <p><strong>Tantangan:</strong><br>${ref.q2}</p><br>
+                        <p><strong>Rencana Perbaikan:</strong><br>${ref.q3}</p>
+                    </div>`;
+            } else {
+                container.innerHTML = `
+                    <form id="form-refleksi">
+                        <label>Apa yang berjalan baik?</label><textarea class="input-form" id="ref-1" required></textarea>
+                        <label>Apa yang masih menjadi tantangan?</label><textarea class="input-form" id="ref-2" required></textarea>
+                        <label>Apa rencana perbaikannya?</label><textarea class="input-form" id="ref-3" required></textarea>
+                        <button type="submit" class="btn btn-primary" id="btn-save-ref">Simpan Refleksi</button>
+                    </form>
+                `;
+                document.getElementById('form-refleksi').onsubmit = (e) => {
+                    e.preventDefault();
+                    document.getElementById('btn-save-ref').innerText = 'Menyimpan...';
+                    document.getElementById('btn-save-ref').disabled = true;
+
+                    const payload = {
+                        id: 'R'+Date.now(), guruId: currentUser.id,
+                        q1: document.getElementById('ref-1').value,
+                        q2: document.getElementById('ref-2').value,
+                        q3: document.getElementById('ref-3').value
+                    };
+
+                    google.script.run.withSuccessHandler(res => {
+                        data = res;
+                        alert('Refleksi tersimpan!');
+                        renderUI();
+                    }).saveReflection(payload);
+                };
+            }
         }
 
         // --- RIWAYAT ---
         function renderRiwayatAll() {
             const c = document.getElementById('riwayat-container');
-            if (data.observations.length === 0) { c.innerHTML = '<p>Belum ada data riwayat.</p>'; return; }
-            let html = '<div class="table-responsive"><table class="table"><thead><tr><th>Guru</th><th>Skor PM</th><th>Kekuatan</th></tr></thead><tbody>';
-            data.observations.forEach(o => {
+            let list = currentUser.role === 'kepsek' ? data.observations : data.observations.filter(o => o.guruId == currentUser.id);
+            
+            if (list.length === 0) { c.innerHTML = '<div class="card"><p>Belum ada riwayat.</p></div>'; return; }
+            
+            let html = '<div class="card"><div class="table-responsive"><table class="table"><thead><tr><th>Guru</th><th>Skor PM</th><th>Kekuatan</th></tr></thead><tbody>';
+            list.forEach(o => {
                 const t = data.teachers.find(x => x.id == o.guruId);
-                const namaGuru = t ? t.nama : 'Guru Dihapus';
-                html += `<tr><td>${namaGuru}</td><td>${o.score} / ${maxScorePM}</td><td>${o.kuat}</td></tr>`;
+                html += `<tr><td>${t?t.nama:'?'}</td><td>${o.score} / 52</td><td>${o.kuat}</td></tr>`;
             });
-            c.innerHTML = html + '</tbody></table></div>';
-        }
-
-        function renderRiwayatPersonal() {
-            const c = document.getElementById('riwayat-container');
-            const obs = data.observations.find(o => o.guruId === currentUser.id);
-            if (!obs) { c.innerHTML = '<p>Belum ada riwayat supervisi.</p>'; return; }
-            c.innerHTML = `
-                <div class="card">
-                    <h3>Hasil Supervisi Pembelajaran Mendalam</h3>
-                    <p>Skor Anda: <strong>${obs.score} / ${maxScorePM}</strong></p>
-                    <p><strong>Catatan Kekuatan:</strong><br>${obs.kuat}</p>
-                    <p><strong>Area Pengembangan:</strong><br>${obs.area}</p>
-                </div>
-            `;
-        }
-
-        function resetData() {
-            alert("Fitur Reset dimatikan karena web sudah terhubung ke Database Online (Google Sheets). Silakan hapus baris data langsung melalui Google Sheets jika ingin mereset.");
+            c.innerHTML = html + '</tbody></table></div></div>';
         }
     </script>
 </body>
