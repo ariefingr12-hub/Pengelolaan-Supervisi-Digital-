@@ -133,7 +133,7 @@
     <!-- LOGIN SCREEN -->
     <div id="login-screen">
         <div class="login-card">
-            <!-- TAMBAHAN LOGO DI LOGIN BRO -->
+            <!-- LOGO DI LOGIN -->
             <img src="logo.png" alt="Logo SDN 21 Sanggalea" class="login-logo">
             <h2>Portal Supervisi</h2>
             <p>UPTD SDN 21 Sanggalea</p>
@@ -151,7 +151,7 @@
             <!-- Sidebar -->
             <aside class="sidebar" id="sidebar">
                 <div class="sidebar-header">
-                    <!-- TAMBAHAN LOGO DI SIDEBAR BRO -->
+                    <!-- LOGO DI SIDEBAR -->
                     <img src="logo.png" alt="Logo Sekolah" class="sidebar-logo">
                     <h2>SDN 21 Sanggalea</h2>
                     <p>Supervisi Akademik</p>
@@ -243,14 +243,29 @@
                             </table>
                         </div>
                     </section>
-<!-- Jadwal Supervisi (Kepsek Only) -->
-<section id="jadwal" class="page-section">
-    <h2>Jadwal Supervisi Akademik</h2>
-    <div class="card mt-2">
-        <p style="color: var(--secondary);">🗓️ Data jadwal supervisi diatur langsung melalui database <b>Google Sheets</b>.</p>
-        <p style="margin-top: 10px;">Jadwal yang sudah Anda tetapkan di Google Sheets akan otomatis muncul sebagai pilihan saat Anda masuk ke menu <strong>🔍 Pelaksanaan Supervisi</strong>.</p>
-    </div>
-</section>
+
+                    <!-- Jadwal Supervisi (Kepsek Only) -->
+                    <section id="jadwal" class="page-section">
+                        <h2>Jadwal Supervisi Akademik</h2>
+                        <div class="card mt-2">
+                            <p style="color: var(--secondary); font-size: 0.9rem; margin-bottom: 15px;">
+                                🗓️ Data jadwal di bawah ini ditarik langsung dari database <b>Google Sheets</b>.
+                            </p>
+                            <div class="table-responsive">
+                                <table class="table" id="table-jadwal">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama Guru</th>
+                                            <th>Tanggal Pelaksanaan</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
                     <!-- Observasi (Kepsek Only) -->
                     <section id="observasi" class="page-section">
                         <h2>Pelaksanaan Supervisi Akademik (Observasi)</h2>
@@ -295,14 +310,14 @@
     </div>
 
     <script>
-      // --- DATA & STATE ---
+        // --- DATA & STATE ---
         let data = { teachers: [], schedules: [], observations: [], reflections: [], followUps: [] };
         let currentUser = null; 
 
         // ==========================================
         // URL WEB APP GAS
         // ==========================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzdZyWKEtaZd1_GfNad9DG8l0I99JRjM1_b7tF78mMQBpNaogkjI0rPX7-PoPh2C6zJ/exec'; 
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxdNpJjt52sFPE18cjwIU57PLmuFwuFJ4MQ7nfdvEknSVQJzidUwj_2_OT1gXTHSph1/exec'; 
 
         // ==========================================
         // DATABASE GURU MANUAL (HARDCODED UNTUK LOGIN)
@@ -443,6 +458,7 @@
                 document.getElementById('dashboard-guru').style.display = 'none';
                 renderDashboardKepsek();
                 renderGuruList();
+                renderJadwalKepsek(); // Panggil fungsi render jadwal
                 setupObservasiSelect();
                 renderRiwayatAll();
             } else {
@@ -557,9 +573,34 @@
             `).join('');
         }
 
+        function renderJadwalKepsek() {
+            const tbody = document.querySelector('#table-jadwal tbody');
+            
+            if (!data.schedules || data.schedules.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Belum ada jadwal di Google Sheets.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.schedules.map(s => {
+                const t = data.teachers.find(x => x.id == s.guruId);
+                const namaGuru = t ? t.nama : 'ID Guru Tidak Valid';
+                
+                let badgeColor = 'bg-yellow'; 
+                if (s.status === 'Selesai' || s.status === 'Sudah') badgeColor = 'bg-green';
+                
+                return `
+                    <tr>
+                        <td><strong>${namaGuru}</strong></td>
+                        <td>${s.tanggal}</td>
+                        <td><span class="badge ${badgeColor}">${s.status || 'Terjadwal'}</span></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
         function setupObservasiSelect() {
             const sel = document.getElementById('select-jadwal-observasi');
-            const jadwalTersedia = data.schedules.filter(s => s.status === 'Terjadwal');
+            const jadwalTersedia = data.schedules.filter(s => s.status === 'Terjadwal' || !s.status);
             
             if (jadwalTersedia.length === 0) {
                 sel.innerHTML = '<option value="">Tidak ada jadwal tersedia</option>';
