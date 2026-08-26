@@ -117,7 +117,7 @@
                 <input type="text" id="login-input" class="input-form" placeholder="Masukkan NIP/NIK (Guru) atau 'admin'" required>
                 <button type="submit" class="btn btn-primary" style="width: 100%">Masuk</button>
             </form>
-            <p style="margin-top: 15px; font-size: 0.8rem; color: var(--secondary);">*Demo: Ketik 'admin' untuk Kepsek, atau '198001012001' untuk Guru Demo 1</p>
+            <p style="margin-top: 15px; font-size: 0.8rem; color: var(--secondary);">*Masukkan NIP/NIK yang terdaftar. Kepsek dapat menggunakan 'admin'</p>
         </div>
     </div>
 
@@ -267,9 +267,38 @@
         let currentUser = null; 
 
         // ==========================================
-        // PASTE URL WEB APP GAS DI SINI, BRO! 👇
+        // URL WEB APP GAS
         // ==========================================
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxdNpJjt52sFPE18cjwIU57PLmuFwuFJ4MQ7nfdvEknSVQJzidUwj_2_OT1gXTHSph1/exec'; 
+
+        // ==========================================
+        // DATABASE GURU MANUAL (HARDCODED UNTUK LOGIN)
+        // ==========================================
+        const NIP_KEPSEK = "198912212015041001"; // NIP Kepala Sekolah
+        const dataGuruSanggalea = [
+            { nama: "RAHMIAH, S.Pd, M.M", nip: "197609131999032007" },
+            { nama: "RAMLAH, S.Pd", nip: "197008281989092001" },
+            { nama: "HJ.SRI RAHAYU, S.Pd", nip: "197004271992032004" },
+            { nama: "RAHMANIAR, S.Pd", nip: "197202211995052001" },
+            { nama: "HJ. A. ANGKE, S.Pd", nip: "197101111994052001" },
+            { nama: "WARDA, S.Pd", nip: "197304032005022004" },
+            { nama: "WAHYUNI PUTRI, S.Pd", nip: "198612122011012017" },
+            { nama: "MUSTAGFIRAH, S.Pd", nip: "198812202011012013" },
+            { nama: "EMMY HAFSAH, S.Pd", nip: "198509192010012035" },
+            { nama: "A. MUTMAINNAH, S.Pd.,M.Pd", nip: "198412142015012001" },
+            { nama: "MIRAYAH HAMID, S.Pd.I", nip: "198404172019032005" },
+            { nama: "KHAERUL AKBAR, S.Pd", nip: "198911292019031006" },
+            { nama: "RIDZKY AL INSYIRAH, S.Pd", nip: "199105182020121016" },
+            { nama: "NURBAITI, S.Pd.I", nip: "199108072020122005" },
+            { nama: "ASMAWAHIDA, S.Pd", nip: "197506082022212015" },
+            { nama: "NIRMALA SARI, S.Pd.I", nip: "198803172024212009" },
+            { nama: "SRI ASTUTI, S.Pd", nip: "199706182024212024" },
+            { nama: "ZAKIAH FIKRIAH, S.Pd", nip: "199712012024212027" },
+            { nama: "JUSLINDAYANI AS. S.Pd", nip: "198801092025212154" },
+            { nama: "ANDI TENRI SHANNAH, S.Pd", nip: "2121" },
+            { nama: "FITRA DEWI, S.Pd", nip: "199005232025212119" },
+            { nama: "ANDI CHAERANA, S.Pd", nip: "2121" }
+        ];
 
         // Paradigma Pembelajaran Mendalam
         const INSTRUMEN_PM = {
@@ -316,14 +345,22 @@
             e.preventDefault();
             const input = document.getElementById('login-input').value.trim();
             
-            if (input.toLowerCase() === 'admin') {
-                currentUser = { role: 'kepsek', nama: 'Kepala Sekolah' };
+            // Cek Kepala Sekolah
+            if (input.toLowerCase() === 'admin' || input === NIP_KEPSEK) {
+                currentUser = { role: 'kepsek', nama: 'Bapak Ariefin Arief, S.Pd.,M.Pd.,Gr' };
             } else {
-                const guru = data.teachers.find(t => t.nip == input); // Toleransi string/number
-                if (guru) {
-                    currentUser = { role: 'guru', id: guru.id, nama: guru.nama };
+                // Cek data dari Hardcoded Array yang baru
+                const guruHardcode = dataGuruSanggalea.find(t => t.nip === input);
+                
+                if (guruHardcode) {
+                    // Cari ID asli guru tersebut dari database GAS (jika ada) agar sinkronisasinya tetap jalan
+                    const guruDariGas = data.teachers.find(t => t.nama === guruHardcode.nama || t.nip === guruHardcode.nip);
+                    const finalId = guruDariGas ? guruDariGas.id : guruHardcode.nip;
+
+                    currentUser = { role: 'guru', id: finalId, nama: guruHardcode.nama };
                 } else {
-                    alert('NIP/NIK tidak ditemukan di Database!'); return;
+                    alert('NIP/NIK tidak ditemukan di sistem. Silakan periksa kembali!'); 
+                    return;
                 }
             }
             sessionStorage.setItem('supervisi_session', JSON.stringify(currentUser));
