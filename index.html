@@ -348,15 +348,45 @@
         function renderUI() {
             if (currentUser.role === 'kepsek') {
                 document.getElementById('dashboard-kepsek').style.display = 'block';
+                document.getElementById('dashboard-guru').style.display = 'none';
                 renderDashboardKepsek();
                 renderGuruList();
                 renderJadwalKepsek();
                 setupObservasiSelect();
             } else {
+                document.getElementById('dashboard-kepsek').style.display = 'none';
                 document.getElementById('dashboard-guru').style.display = 'block';
+                renderDashboardGuru(); // Menampilkan jadwal guru di dashboard
                 renderRefleksiGuru();
             }
             renderRiwayatAll();
+        }
+
+        // FUNGSI BARU UNTUK DASHBOARD GURU
+        function renderDashboardGuru() {
+            const container = document.getElementById('dashboard-guru');
+            const mySchedules = data.schedules.filter(s => s.guruId == currentUser.id);
+            
+            let html = `<h2>Selamat Datang, ${currentUser.nama}!</h2>
+                        <p style="color:var(--secondary); margin-bottom:15px;">Pantau jadwal dan lakukan refleksi pasca-observasi melalui menu di samping.</p>
+                        <h3>Jadwal Supervisi Anda:</h3>`;
+            
+            if (mySchedules.length === 0) {
+                html += `<div style="margin-top:10px;"><span class="badge bg-yellow" style="font-size:0.9rem;">Belum dijadwalkan oleh Kepala Sekolah</span></div>`;
+            } else {
+                html += `<div class="table-responsive mt-2">
+                            <table class="table">
+                                <thead><tr><th>Tanggal Pelaksanaan</th><th>Status</th></tr></thead>
+                                <tbody>`;
+                mySchedules.forEach(s => {
+                    html += `<tr>
+                                <td><strong>${s.tanggal}</strong></td>
+                                <td><span class="badge ${s.status === 'Selesai' ? 'bg-green' : 'bg-yellow'}">${s.status || 'Terjadwal'}</span></td>
+                             </tr>`;
+                });
+                html += `</tbody></table></div>`;
+            }
+            container.innerHTML = html;
         }
 
         function toggleForm(id) { document.getElementById(id).classList.toggle('hidden'); }
