@@ -16,6 +16,9 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); }
         body { background: linear-gradient(120deg, #f5f7fa 0%, #c3cfe2 100%); color: var(--text-main); line-height: 1.5; }
 
+        /* Loading Overlay */
+        #loading { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 9999; justify-content: center; align-items: center; font-size: 1.5rem; color: var(--primary); font-weight: bold; }
+
         /* Login */
         #login-screen { display: flex; height: 100vh; align-items: center; justify-content: center; background: linear-gradient(135deg, #1a73e8 0%, #4facfe 100%); }
         .login-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 100%; max-width: 400px; text-align: center; }
@@ -61,6 +64,7 @@
         .btn-primary { background: var(--primary); color: white; }
         .btn-primary:hover { background: var(--primary-hover); }
         .btn-secondary { background: var(--bg-light); border: 1px solid var(--border); }
+        .btn-sm { padding: 4px 8px; font-size: 12px; margin-right: 5px; }
         
         .input-form { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-top: 5px; margin-bottom: 15px; font-size: 0.95rem; }
         .input-form:focus { outline: none; border-color: var(--primary); }
@@ -88,6 +92,8 @@
     </style>
 </head>
 <body>
+
+    <div id="loading">Memproses Data...</div>
 
     <!-- LOGIN SCREEN -->
     <div id="login-screen">
@@ -130,7 +136,7 @@
                     </div>
                     <div style="font-weight: 600; color: var(--primary); display: flex; gap:15px; align-items:center;">
                         <span id="user-display-name">User</span>
-                        <button class="btn btn-secondary btn-sm" onclick="logout()">Keluar</button>
+                        <button class="btn btn-secondary btn-sm" onclick="logout()" style="margin: 0;">Keluar</button>
                     </div>
                 </header>
 
@@ -143,8 +149,7 @@
                             <div class="stats-grid" id="dashboard-stats"></div>
                         </div>
                         <div id="dashboard-guru" style="display: none;" class="card">
-                            <h2>Selamat Datang, Guru!</h2>
-                            <p>Pantau jadwal dan lakukan refleksi pasca-observasi melalui menu di samping.</p>
+                            <!-- Diisi oleh JS -->
                         </div>
                     </section>
 
@@ -174,7 +179,7 @@
 
                         <div class="table-responsive mt-2">
                             <table class="table" id="table-guru">
-                                <thead><tr><th>Nama Guru</th><th>NIP/NIK</th><th>Mapel</th><th>Status</th></tr></thead> <thead><tr><th>Nama Guru</th><th>Tanggal</th><th>Status</th><th>Aksi</th></tr></thead>
+                                <thead><tr><th>Nama Guru</th><th>NIP/NIK</th><th>Mapel</th><th>Status</th></tr></thead>
                                 <tbody></tbody>
                             </table>
                         </div>
@@ -204,7 +209,7 @@
                         <div class="card mt-2">
                             <div class="table-responsive">
                                 <table class="table" id="table-jadwal">
-                                    <thead><tr><th>Nama Guru</th><th>Tanggal Pelaksanaan</th><th>Status</th></tr></thead>
+                                    <thead><tr><th>Nama Guru</th><th>Tanggal Pelaksanaan</th><th>Status</th><th>Aksi</th></tr></thead>
                                     <tbody></tbody>
                                 </table>
                             </div>
@@ -262,7 +267,6 @@
                 const response = await fetch(`${SCRIPT_URL}?action=${action}`);
                 return await response.json();
             } else {
-                // Gunakan POST dengan text/plain agar tidak diblokir CORS Google
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain' },
@@ -278,10 +282,8 @@
             btn.innerText = "Memuat Database..."; btn.disabled = true;
             
             try {
-                // Menarik data awal menggunakan Fetch[cite: 2]
                 const res = await fetchAPI('getAppData');
                 data = res;
-                console.log("Database Dimuat:", data);
                 btn.innerText = "Masuk"; btn.disabled = false;
                 
                 const saved = sessionStorage.getItem('sesi_supervisi');
@@ -335,7 +337,7 @@
             document.querySelectorAll('.nav-item.visible').forEach(link => {
                 link.onclick = (e) => {
                     e.preventDefault();
-                    document.querySelectorAll('.nav-item, .page-section').forEach(n => n.classList.remove('active', 'active'));
+                    document.querySelectorAll('.nav-item, .page-section').forEach(n => n.classList.remove('active'));
                     link.classList.add('active');
                     document.getElementById(link.dataset.target).classList.add('active');
                     document.getElementById('sidebar').classList.remove('open'); 
@@ -356,13 +358,12 @@
             } else {
                 document.getElementById('dashboard-kepsek').style.display = 'none';
                 document.getElementById('dashboard-guru').style.display = 'block';
-                renderDashboardGuru(); // Menampilkan jadwal guru di dashboard
+                renderDashboardGuru(); 
                 renderRefleksiGuru();
             }
             renderRiwayatAll();
         }
 
-        // FUNGSI BARU UNTUK DASHBOARD GURU
         function renderDashboardGuru() {
             const container = document.getElementById('dashboard-guru');
             const mySchedules = data.schedules.filter(s => s.guruId == currentUser.id);
@@ -459,8 +460,8 @@
                 
                 const actionButtons = s.status === 'Selesai' 
                     ? '-' 
-                    : `<button onclick="editJadwal('${s.id}', '${s.tanggal}')" class="btn btn-sm" style="background:#3498db; color:white; padding: 4px 8px; margin-right:5px; font-size:12px; border:none; border-radius:3px; cursor:pointer;">Edit</button>
-                       <button onclick="hapusJadwal('${s.id}')" class="btn btn-sm" style="background:#e74c3c; color:white; padding: 4px 8px; font-size:12px; border:none; border-radius:3px; cursor:pointer;">Hapus</button>`;
+                    : `<button onclick="editJadwal('${s.id}', '${s.tanggal}')" class="btn btn-sm btn-primary">Edit</button>
+                       <button onclick="hapusJadwal('${s.id}')" class="btn btn-sm" style="background:#e74c3c; color:white;">Hapus</button>`;
 
                 return `<tr>
                     <td>${namaGuru}</td>
@@ -477,11 +478,8 @@
             
             document.getElementById('loading').style.display = 'flex';
             try {
-                const res = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'editSchedule', payload: { id: id, tanggal: newDate } })
-                });
-                data = await res.json();
+                const res = await fetchAPI('editSchedule', { id: id, tanggal: newDate });
+                data = res;
                 renderUI(); 
             } catch (e) {
                 alert("Gagal mengupdate jadwal.");
@@ -494,17 +492,15 @@
             
             document.getElementById('loading').style.display = 'flex';
             try {
-                const res = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'deleteSchedule', payload: { id: id } })
-                });
-                data = await res.json();
+                const res = await fetchAPI('deleteSchedule', { id: id });
+                data = res;
                 renderUI();
             } catch (e) {
                 alert("Gagal menghapus jadwal.");
             }
             document.getElementById('loading').style.display = 'none';
         }
+        
         // SUBMIT TAMBAH JADWAL
         document.getElementById('form-add-schedule').onsubmit = async (e) => {
             e.preventDefault();
