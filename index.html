@@ -16,6 +16,10 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); }
         body { background: linear-gradient(120deg, #f5f7fa 0%, #c3cfe2 100%); color: var(--text-main); line-height: 1.5; }
 
+        /* Pengaturan Logo */
+        .logo-img { width: 80px; height: auto; margin-bottom: 10px; }
+        .sidebar-logo { width: 60px; height: auto; margin-bottom: 10px; }
+
         /* Loading Overlay */
         #loading { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 9999; justify-content: center; align-items: center; font-size: 1.5rem; color: var(--primary); font-weight: bold; }
 
@@ -98,6 +102,9 @@
     <!-- LOGIN SCREEN -->
     <div id="login-screen">
         <div class="login-card">
+            <!-- LOGO HALAMAN LOGIN -->
+            <img src="URL_LOGO_ANDA" alt="Logo Sekolah" class="logo-img">
+            
             <h2>Portal Supervisi</h2>
             <p>UPTD SDN 21 Sanggalea</p>
             <form id="login-form">
@@ -106,7 +113,7 @@
             </form>
             <p style="margin-top: 20px; font-size: 0.75rem; color: var(--secondary);">*Gunakan NIP. Kepsek gunakan 'admin'</p>
         </div>
-    </div>
+    </div> 
 
     <!-- MAIN APP SCREEN -->
     <div id="app-screen">
@@ -114,6 +121,9 @@
             <!-- Sidebar -->
             <aside class="sidebar" id="sidebar">
                 <div class="sidebar-header">
+                    <!-- LOGO MENU SIDEBAR -->
+                    <img src="URL_LOGO_ANDA" alt="Logo Sekolah" class="sidebar-logo">
+                    
                     <h2>SDN 21 Sanggalea</h2>
                     <p>Supervisi Akademik</p>
                 </div>
