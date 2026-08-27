@@ -148,14 +148,13 @@
                         </div>
                     </section>
 
-                    <!-- Data Guru (Bisa Tambah Data Langsung) -->
+                    <!-- Data Guru -->
                     <section id="data-guru" class="page-section">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <h2>Manajemen Data Guru</h2>
                             <button class="btn btn-primary" onclick="toggleForm('form-tambah-guru')">+ Tambah Guru</button>
                         </div>
                         
-                        <!-- Form Tambah Guru -->
                         <div id="form-tambah-guru" class="form-box hidden mt-2">
                             <h3>Form Tambah Guru Baru</h3>
                             <form id="form-add-teacher">
@@ -181,14 +180,13 @@
                         </div>
                     </section>
 
-                    <!-- Jadwal Supervisi (Bisa Tambah Jadwal) -->
+                    <!-- Jadwal Supervisi -->
                     <section id="jadwal" class="page-section">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <h2>Jadwal Supervisi Akademik</h2>
                             <button class="btn btn-primary" onclick="toggleForm('form-tambah-jadwal')">+ Tambah Jadwal</button>
                         </div>
 
-                        <!-- Form Tambah Jadwal -->
                         <div id="form-tambah-jadwal" class="form-box hidden mt-2">
                             <h3>Form Buat Jadwal Supervisi</h3>
                             <form id="form-add-schedule">
@@ -244,11 +242,13 @@
 
     <!-- SCRIPT LOGIKA UTAMA -->
     <script>
+        // PASTIKAN MENGGANTI LINK INI DENGAN URL WEB APP MILIK ANDA
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz_GANTI_INI/exec';
+
         // --- DATA STATE ---
         let data = { teachers: [], schedules: [], observations: [], reflections: [] };
         let currentUser = null; 
 
-        // Instrumen PM
         const INSTRUMEN_PM = {
             DIMENSI: { title: "1. DIMENSI PROFIL LULUSAN", items: ["Siswa menunjukkan Keimanan dan Kewargaan.", "Siswa menunjukkan Penalaran Kritis.", "Siswa mampu berkolaborasi."] },
             PRINSIP: { title: "2. PRINSIP PEMBELAJARAN", items: ["Pembelajaran BERMAKNA dan relevan.", "Suasana belajar MENGGEMBIRAKAN.", "Belajar dengan BERKESADARAN."] },
@@ -256,21 +256,40 @@
             KERANGKA: { title: "4. KERANGKA PEMBELAJARAN", items: ["PRAKTIK PEDAGOGIS berpusat pada siswa.", "LINGKUNGAN PEMBELAJARAN inklusif.", "PEMANFAATAN DIGITAL efektif.", "Membangun KEMITRAAN PEMBELAJARAN."] }
         };
 
+        // --- FUNGSI BANTUAN API FETCH UNTUK VERCEL ---
+        async function fetchAPI(action, payload = null) {
+            if (!payload) {
+                const response = await fetch(`${SCRIPT_URL}?action=${action}`);
+                return await response.json();
+            } else {
+                // Gunakan POST dengan text/plain agar tidak diblokir CORS Google
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ action: action, payload: payload })
+                });
+                return await response.json();
+            }
+        }
+
         // --- INIT ---
-        window.onload = () => {
+        window.onload = async () => {
             const btn = document.querySelector('#login-form button');
             btn.innerText = "Memuat Database..."; btn.disabled = true;
             
-            // Panggil fungsi getAppData di GAS
-            google.script.run.withSuccessHandler(res => {
+            try {
+                // Menarik data awal menggunakan Fetch[cite: 2]
+                const res = await fetchAPI('getAppData');
                 data = res;
                 console.log("Database Dimuat:", data);
                 btn.innerText = "Masuk"; btn.disabled = false;
                 
-                // Auto login jika ada session
                 const saved = sessionStorage.getItem('sesi_supervisi');
                 if (saved) { currentUser = JSON.parse(saved); showApp(); }
-            }).getAppData();
+            } catch (error) {
+                console.error("Gagal memuat database:", error);
+                btn.innerText = "Gagal memuat data. Cek SCRIPT_URL!";
+            }
         };
 
         // --- AUTH ---
@@ -281,7 +300,6 @@
             if (input === 'admin') {
                 currentUser = { role: 'kepsek', nama: 'Kepala Sekolah' };
             } else {
-                // Cek NIP langsung dari data Database terbaru!
                 const guru = data.teachers.find(t => t.nip == input);
                 if (guru) {
                     currentUser = { role: 'guru', id: guru.id, nama: guru.nama };
@@ -309,7 +327,7 @@
                 }
             });
             setupNavigation();
-            document.querySelector('.nav-item.visible').click(); // Auto click menu pertama
+            document.querySelector('.nav-item.visible').click(); 
             renderUI();
         }
 
@@ -320,7 +338,7 @@
                     document.querySelectorAll('.nav-item, .page-section').forEach(n => n.classList.remove('active', 'active'));
                     link.classList.add('active');
                     document.getElementById(link.dataset.target).classList.add('active');
-                    document.getElementById('sidebar').classList.remove('open'); // Tutup sidebar di HP
+                    document.getElementById('sidebar').classList.remove('open'); 
                 };
             });
             document.getElementById('menu-toggle').onclick = () => document.getElementById('sidebar').classList.toggle('open');
@@ -370,7 +388,7 @@
         }
 
         // SUBMIT TAMBAH GURU
-        document.getElementById('form-add-teacher').onsubmit = (e) => {
+        document.getElementById('form-add-teacher').onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-save-teacher');
             btn.innerText = 'Menyimpan...'; btn.disabled = true;
@@ -382,14 +400,19 @@
                 mapel: document.getElementById('add-mapel').value
             };
 
-            google.script.run.withSuccessHandler(res => {
-                data = res; // Update data lokal dari server
+            try {
+                const res = await fetchAPI('addTeacher', payload);
+                data = res; 
                 alert("Data guru berhasil ditambahkan!");
                 document.getElementById('form-add-teacher').reset();
                 toggleForm('form-tambah-guru');
                 renderUI();
+            } catch (error) {
+                alert("Gagal menyimpan data guru.");
+                console.error(error);
+            } finally {
                 btn.innerText = 'Simpan Data Guru'; btn.disabled = false;
-            }).addTeacher(payload);
+            }
         };
 
         // --- MANAJEMEN JADWAL (KEPSEK) ---
@@ -407,7 +430,7 @@
         }
 
         // SUBMIT TAMBAH JADWAL
-        document.getElementById('form-add-schedule').onsubmit = (e) => {
+        document.getElementById('form-add-schedule').onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-save-schedule');
             btn.innerText = 'Menyimpan...'; btn.disabled = true;
@@ -418,14 +441,19 @@
                 tanggal: document.getElementById('add-sched-tgl').value
             };
 
-            google.script.run.withSuccessHandler(res => {
+            try {
+                const res = await fetchAPI('addSchedule', payload);
                 data = res; 
                 alert("Jadwal berhasil dibuat!");
                 document.getElementById('form-add-schedule').reset();
                 toggleForm('form-tambah-jadwal');
                 renderUI();
+            } catch (error) {
+                alert("Gagal menyimpan jadwal.");
+                console.error(error);
+            } finally {
                 btn.innerText = 'Simpan Jadwal'; btn.disabled = false;
-            }).addSchedule(payload);
+            }
         };
 
         // --- OBSERVASI ---
@@ -467,10 +495,11 @@
             
             form.innerHTML = html;
             
-            form.onsubmit = (e) => {
+            form.onsubmit = async (e) => {
                 e.preventDefault();
-                document.getElementById('btn-save-obs').innerText = 'Menyimpan...'; 
-                document.getElementById('btn-save-obs').disabled = true;
+                const btn = document.getElementById('btn-save-obs');
+                btn.innerText = 'Menyimpan...'; 
+                btn.disabled = true;
 
                 let score = 0;
                 document.querySelectorAll('input[type="radio"]:checked').forEach(el => score += parseInt(el.value));
@@ -481,12 +510,18 @@
                     area: document.getElementById('obs-area').value
                 };
                 
-                google.script.run.withSuccessHandler(res => {
+                try {
+                    const res = await fetchAPI('saveObservation', payload);
                     data = res;
                     alert("Observasi Selesai!");
                     document.getElementById('form-observasi-container').classList.add('hidden');
                     renderUI();
-                }).saveObservation(payload);
+                } catch (error) {
+                    alert("Gagal menyimpan observasi.");
+                    console.error(error);
+                } finally {
+                    btn.innerText = 'Simpan Observasi'; btn.disabled = false;
+                }
             };
         }
 
@@ -514,10 +549,11 @@
                         <button type="submit" class="btn btn-primary" id="btn-save-ref">Simpan Refleksi</button>
                     </form>
                 `;
-                document.getElementById('form-refleksi').onsubmit = (e) => {
+                document.getElementById('form-refleksi').onsubmit = async (e) => {
                     e.preventDefault();
-                    document.getElementById('btn-save-ref').innerText = 'Menyimpan...';
-                    document.getElementById('btn-save-ref').disabled = true;
+                    const btn = document.getElementById('btn-save-ref');
+                    btn.innerText = 'Menyimpan...';
+                    btn.disabled = true;
 
                     const payload = {
                         id: 'R'+Date.now(), guruId: currentUser.id,
@@ -526,11 +562,17 @@
                         q3: document.getElementById('ref-3').value
                     };
 
-                    google.script.run.withSuccessHandler(res => {
+                    try {
+                        const res = await fetchAPI('saveReflection', payload);
                         data = res;
                         alert('Refleksi tersimpan!');
                         renderUI();
-                    }).saveReflection(payload);
+                    } catch (error) {
+                        alert("Gagal menyimpan refleksi.");
+                        console.error(error);
+                    } finally {
+                        btn.innerText = 'Simpan Refleksi'; btn.disabled = false;
+                    }
                 };
             }
         }
