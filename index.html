@@ -446,19 +446,65 @@
         };
 
         // --- MANAJEMEN JADWAL (KEPSEK) ---
-        function renderJadwalKepsek() {
+       function renderJadwalKepsek() {
             const tbody = document.querySelector('#table-jadwal tbody');
             if (data.schedules.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3">Belum ada jadwal.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4">Belum ada jadwal.</td></tr>';
                 return;
             }
+            
             tbody.innerHTML = data.schedules.map(s => {
-                const t = data.teachers.find(x => x.id == s.guruId);
-                return `<tr><td><strong>${t?t.nama:'?'}</strong></td><td>${s.tanggal}</td>
-                <td><span class="badge ${s.status==='Selesai'?'bg-green':'bg-yellow'}">${s.status||'Terjadwal'}</span></td></tr>`;
+                const guru = data.teachers.find(t => t.id == s.guruId);
+                const namaGuru = guru ? guru.nama : 'Unknown';
+                
+                const actionButtons = s.status === 'Selesai' 
+                    ? '-' 
+                    : `<button onclick="editJadwal('${s.id}', '${s.tanggal}')" class="btn btn-sm" style="background:#3498db; color:white; padding: 4px 8px; margin-right:5px; font-size:12px; border:none; border-radius:3px; cursor:pointer;">Edit</button>
+                       <button onclick="hapusJadwal('${s.id}')" class="btn btn-sm" style="background:#e74c3c; color:white; padding: 4px 8px; font-size:12px; border:none; border-radius:3px; cursor:pointer;">Hapus</button>`;
+
+                return `<tr>
+                    <td>${namaGuru}</td>
+                    <td>${s.tanggal}</td>
+                    <td><span class="badge ${s.status === 'Selesai' ? 'bg-green' : 'bg-yellow'}">${s.status || 'Terjadwal'}</span></td>
+                    <td>${actionButtons}</td>
+                </tr>`;
             }).join('');
         }
 
+        async function editJadwal(id, oldDate) {
+            const newDate = prompt("Ubah tanggal pelaksanaan (Format: YYYY-MM-DD):", oldDate);
+            if (!newDate || newDate === oldDate) return;
+            
+            document.getElementById('loading').style.display = 'flex';
+            try {
+                const res = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'editSchedule', payload: { id: id, tanggal: newDate } })
+                });
+                data = await res.json();
+                renderUI(); 
+            } catch (e) {
+                alert("Gagal mengupdate jadwal.");
+            }
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        async function hapusJadwal(id) {
+            if (!confirm("Yakin ingin menghapus jadwal ini?")) return;
+            
+            document.getElementById('loading').style.display = 'flex';
+            try {
+                const res = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'deleteSchedule', payload: { id: id } })
+                });
+                data = await res.json();
+                renderUI();
+            } catch (e) {
+                alert("Gagal menghapus jadwal.");
+            }
+            document.getElementById('loading').style.display = 'none';
+        }
         // SUBMIT TAMBAH JADWAL
         document.getElementById('form-add-schedule').onsubmit = async (e) => {
             e.preventDefault();
