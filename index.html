@@ -235,7 +235,8 @@
                             <button class="btn btn-primary" onclick="mulaiObservasi()">Mulai Penilaian</button>
                         </div>
                         <div id="form-observasi-container" class="hidden card">
-                            <form id="form-instrumen-observasi"></form>
+                            <!-- PERBAIKAN: Tambah novalidate di sini -->
+                            <form id="form-instrumen-observasi" novalidate></form>
                         </div>
                     </section>
 
@@ -565,7 +566,7 @@
                 section.items.forEach(item => {
                     html += `<div style="margin: 10px 0;"><p>${item}</p><div class="radio-group">`;
                     ['Belum Terlihat', 'Mulai Terlihat', 'Sering Terlihat', 'Konsisten'].forEach((val, idx) => {
-                        html += `<input type="radio" name="ind_${i}" id="ind_${i}_${idx+1}" value="${idx+1}" required><label for="ind_${i}_${idx+1}">${val}</label>`;
+                        html += `<input type="radio" name="ind_${i}" id="ind_${i}_${idx+1}" value="${idx+1}"><label for="ind_${i}_${idx+1}">${val}</label>`;
                     });
                     html += `</div></div>`; i++;
                 });
@@ -579,6 +580,25 @@
             
             form.onsubmit = async (e) => {
                 e.preventDefault();
+                
+                // --- PERBAIKAN: PENGECEKAN MANUAL ---
+                const totalPertanyaan = 18; // Total soal observasi pada instrumen
+                const terjawab = document.querySelectorAll('input[type="radio"]:checked').length;
+                
+                if (terjawab < totalPertanyaan) {
+                    alert(`Gagal Menyimpan: Masih ada instrumen yang belum dinilai! \n(Baru diisi: ${terjawab} dari ${totalPertanyaan})`);
+                    return; // Hentikan eksekusi jika ada yang kosong
+                }
+                
+                const kuat = document.getElementById('obs-kuat').value.trim();
+                const area = document.getElementById('obs-area').value.trim();
+                
+                if (!kuat || !area) {
+                    alert("Gagal Menyimpan: Catatan Kekuatan dan Area Pengembangan wajib diisi!");
+                    return; // Hentikan eksekusi jika textarea kosong
+                }
+                // ------------------------------------
+
                 const btn = document.getElementById('btn-save-obs');
                 btn.innerText = 'Menyimpan...'; 
                 btn.disabled = true;
@@ -588,8 +608,8 @@
                 
                 const payload = {
                     id: 'O'+Date.now(), guruId: t.id, schedId: sched.id, score,
-                    kuat: document.getElementById('obs-kuat').value,
-                    area: document.getElementById('obs-area').value
+                    kuat: kuat,
+                    area: area
                 };
                 
                 try {
@@ -599,7 +619,7 @@
                     document.getElementById('form-observasi-container').classList.add('hidden');
                     renderUI();
                 } catch (error) {
-                    alert("Gagal menyimpan observasi.");
+                    alert("Gagal menyimpan observasi. Periksa koneksi internet.");
                     console.error(error);
                 } finally {
                     btn.innerText = 'Simpan Observasi'; btn.disabled = false;
