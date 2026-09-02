@@ -235,7 +235,7 @@
                             <button class="btn btn-primary" onclick="mulaiObservasi()">Mulai Penilaian</button>
                         </div>
                         <div id="form-observasi-container" class="hidden card">
-                            <!-- PERBAIKAN: Tambah novalidate di sini -->
+                            <!-- Form novalidate menghindari blokir scroll bawaan browser -->
                             <form id="form-instrumen-observasi" novalidate></form>
                         </div>
                     </section>
@@ -266,10 +266,10 @@
         let currentUser = null; 
 
         const INSTRUMEN_PM = {
-            DIMENSI: { title: "1. DIMENSI PROFIL LULUSAN", items: ["Siswa menunjukkan Keimanan dan Kewargaan.", "Siswa menunjukkan Penalaran Kritis.", "Siswa mampu berkolaborasi.", "Siswa Menunjukkan sikap kewargaan.", "Siswa menunjukkan Kreativitas.", "Siswa menunjukkan kemandirian.", "Siswa menunjukkan kesehatan.", "Siswa menunjukkan komunikasi." ] },
-            PRINSIP: { title: "2. PRINSIP PEMBELAJARAN", items: ["Pembelajaran BERMAKNA dan relevan.", "Suasana belajar MENGGEMBIRAKAN.", "Belajar dengan BERKESADARAN."] },
-            PENGALAMAN: { title: "3. PENGALAMAN BELAJAR", items: ["Aktivitas MEMAHAMI materi.", "MENGAPLIKASI pengetahuan.", "MEREFLEKSI hasil belajar."] },
-            KERANGKA: { title: "4. KERANGKA PEMBELAJARAN", items: ["PRAKTIK PEDAGOGIS berpusat pada siswa.", "LINGKUNGAN PEMBELAJARAN inklusif.", "PEMANFAATAN DIGITAL efektif.", "Membangun KEMITRAAN PEMBELAJARAN."] }
+            DIMENSI: { title: "1. DIMENSI PROFIL LULUSAN (Opsional, isi sesuai fokus)", items: ["Siswa menunjukkan Keimanan dan Kewargaan.", "Siswa menunjukkan Penalaran Kritis.", "Siswa mampu berkolaborasi.", "Siswa Menunjukkan sikap kewargaan.", "Siswa menunjukkan Kreativitas.", "Siswa menunjukkan kemandirian.", "Siswa menunjukkan kesehatan.", "Siswa menunjukkan komunikasi." ] },
+            PRINSIP: { title: "2. PRINSIP PEMBELAJARAN (Wajib)", items: ["Pembelajaran BERMAKNA dan relevan.", "Suasana belajar MENGGEMBIRAKAN.", "Belajar dengan BERKESADARAN."] },
+            PENGALAMAN: { title: "3. PENGALAMAN BELAJAR (Wajib)", items: ["Aktivitas MEMAHAMI materi.", "MENGAPLIKASI pengetahuan.", "MEREFLEKSI hasil belajar."] },
+            KERANGKA: { title: "4. KERANGKA PEMBELAJARAN (Wajib)", items: ["PRAKTIK PEDAGOGIS berpusat pada siswa.", "LINGKUNGAN PEMBELAJARAN inklusif.", "PEMANFAATAN DIGITAL efektif.", "Membangun KEMITRAAN PEMBELAJARAN."] }
         };
 
         // --- FUNGSI BANTUAN API FETCH UNTUK VERCEL ---
@@ -581,13 +581,20 @@
             form.onsubmit = async (e) => {
                 e.preventDefault();
                 
-                // --- PERBAIKAN: PENGECEKAN MANUAL ---
-                const totalPertanyaan = 18; // Total soal observasi pada instrumen
-                const terjawab = document.querySelectorAll('input[type="radio"]:checked').length;
+                // --- PERBAIKAN: PENGECEKAN MANUAL (DPL OPSIONAL) ---
+                // ind_0 sampai ind_7 (8 item DPL) opsional sesuai pilihan guru
+                // ind_8 sampai ind_17 (10 item lainnya) tetap wajib
                 
-                if (terjawab < totalPertanyaan) {
-                    alert(`Gagal Menyimpan: Masih ada instrumen yang belum dinilai! \n(Baru diisi: ${terjawab} dari ${totalPertanyaan})`);
-                    return; // Hentikan eksekusi jika ada yang kosong
+                let itemWajibTerlewat = 0;
+                for (let j = 8; j <= 17; j++) {
+                    if (!document.querySelector(`input[name="ind_${j}"]:checked`)) {
+                        itemWajibTerlewat++;
+                    }
+                }
+                
+                if (itemWajibTerlewat > 0) {
+                    alert(`Gagal Menyimpan: Masih ada ${itemWajibTerlewat} instrumen wajib di bagian Prinsip, Pengalaman, atau Kerangka yang belum dinilai!`);
+                    return; // Hentikan eksekusi
                 }
                 
                 const kuat = document.getElementById('obs-kuat').value.trim();
@@ -595,7 +602,7 @@
                 
                 if (!kuat || !area) {
                     alert("Gagal Menyimpan: Catatan Kekuatan dan Area Pengembangan wajib diisi!");
-                    return; // Hentikan eksekusi jika textarea kosong
+                    return; 
                 }
                 // ------------------------------------
 
@@ -686,10 +693,11 @@
             
             if (list.length === 0) { c.innerHTML = '<div class="card"><p>Belum ada riwayat.</p></div>'; return; }
             
-            let html = '<div class="card"><div class="table-responsive"><table class="table"><thead><tr><th>Guru</th><th>Skor PM</th><th>Kekuatan</th></tr></thead><tbody>';
+            // Perbaikan: Angka "/ 52" dihapus agar skor lebih dinamis mengikuti jumlah DPL yang dipilih
+            let html = '<div class="card"><div class="table-responsive"><table class="table"><thead><tr><th>Guru</th><th>Total Skor</th><th>Kekuatan</th></tr></thead><tbody>';
             list.forEach(o => {
                 const t = data.teachers.find(x => x.id == o.guruId);
-                html += `<tr><td>${t?t.nama:'?'}</td><td>${o.score} / 52</td><td>${o.kuat}</td></tr>`;
+                html += `<tr><td>${t?t.nama:'?'}</td><td>${o.score}</td><td>${o.kuat}</td></tr>`;
             });
             c.innerHTML = html + '</tbody></table></div></div>';
         }
