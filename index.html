@@ -235,8 +235,7 @@
                             <button class="btn btn-primary" onclick="mulaiObservasi()">Mulai Penilaian</button>
                         </div>
                         <div id="form-observasi-container" class="hidden card">
-                            <!-- Form novalidate menghindari blokir scroll bawaan browser -->
-                            <form id="form-instrumen-observasi" novalidate></form>
+                            <form id="form-instrumen-observasi"></form>
                         </div>
                     </section>
 
@@ -266,10 +265,10 @@
         let currentUser = null; 
 
         const INSTRUMEN_PM = {
-            DIMENSI: { title: "1. DIMENSI PROFIL LULUSAN (Opsional, isi sesuai fokus)", items: ["Siswa menunjukkan Keimanan dan Kewargaan.", "Siswa menunjukkan Penalaran Kritis.", "Siswa mampu berkolaborasi.", "Siswa Menunjukkan sikap kewargaan.", "Siswa menunjukkan Kreativitas.", "Siswa menunjukkan kemandirian.", "Siswa menunjukkan kesehatan.", "Siswa menunjukkan komunikasi." ] },
-            PRINSIP: { title: "2. PRINSIP PEMBELAJARAN (Wajib)", items: ["Pembelajaran BERMAKNA dan relevan.", "Suasana belajar MENGGEMBIRAKAN.", "Belajar dengan BERKESADARAN."] },
-            PENGALAMAN: { title: "3. PENGALAMAN BELAJAR (Wajib)", items: ["Aktivitas MEMAHAMI materi.", "MENGAPLIKASI pengetahuan.", "MEREFLEKSI hasil belajar."] },
-            KERANGKA: { title: "4. KERANGKA PEMBELAJARAN (Wajib)", items: ["PRAKTIK PEDAGOGIS berpusat pada siswa.", "LINGKUNGAN PEMBELAJARAN inklusif.", "PEMANFAATAN DIGITAL efektif.", "Membangun KEMITRAAN PEMBELAJARAN."] }
+            DIMENSI: { title: "1. DIMENSI PROFIL LULUSAN", items: ["Siswa menunjukkan Keimanan dan Kewargaan.", "Siswa menunjukkan Penalaran Kritis.", "Siswa mampu berkolaborasi.", "Siswa Menunjukkan sikap kewargaan.", "Siswa menunjukkan Kreativitas.", "Siswa menunjukkan kemandirian.", "Siswa menunjukkan kesehatan.", "Siswa menunjukkan komunikasi." ] },
+            PRINSIP: { title: "2. PRINSIP PEMBELAJARAN", items: ["Pembelajaran BERMAKNA dan relevan.", "Suasana belajar MENGGEMBIRAKAN.", "Belajar dengan BERKESADARAN."] },
+            PENGALAMAN: { title: "3. PENGALAMAN BELAJAR", items: ["Aktivitas MEMAHAMI materi.", "MENGAPLIKASI pengetahuan.", "MEREFLEKSI hasil belajar."] },
+            KERANGKA: { title: "4. KERANGKA PEMBELAJARAN", items: ["PRAKTIK PEDAGOGIS berpusat pada siswa.", "LINGKUNGAN PEMBELAJARAN inklusif.", "PEMANFAATAN DIGITAL efektif.", "Membangun KEMITRAAN PEMBELAJARAN."] }
         };
 
         // --- FUNGSI BANTUAN API FETCH UNTUK VERCEL ---
@@ -566,7 +565,7 @@
                 section.items.forEach(item => {
                     html += `<div style="margin: 10px 0;"><p>${item}</p><div class="radio-group">`;
                     ['Belum Terlihat', 'Mulai Terlihat', 'Sering Terlihat', 'Konsisten'].forEach((val, idx) => {
-                        html += `<input type="radio" name="ind_${i}" id="ind_${i}_${idx+1}" value="${idx+1}"><label for="ind_${i}_${idx+1}">${val}</label>`;
+                        html += `<input type="radio" name="ind_${i}" id="ind_${i}_${idx+1}" value="${idx+1}" required><label for="ind_${i}_${idx+1}">${val}</label>`;
                     });
                     html += `</div></div>`; i++;
                 });
@@ -580,32 +579,6 @@
             
             form.onsubmit = async (e) => {
                 e.preventDefault();
-                
-                // --- PERBAIKAN: PENGECEKAN MANUAL (DPL OPSIONAL) ---
-                // ind_0 sampai ind_7 (8 item DPL) opsional sesuai pilihan guru
-                // ind_8 sampai ind_17 (10 item lainnya) tetap wajib
-                
-                let itemWajibTerlewat = 0;
-                for (let j = 8; j <= 17; j++) {
-                    if (!document.querySelector(`input[name="ind_${j}"]:checked`)) {
-                        itemWajibTerlewat++;
-                    }
-                }
-                
-                if (itemWajibTerlewat > 0) {
-                    alert(`Gagal Menyimpan: Masih ada ${itemWajibTerlewat} instrumen wajib di bagian Prinsip, Pengalaman, atau Kerangka yang belum dinilai!`);
-                    return; // Hentikan eksekusi
-                }
-                
-                const kuat = document.getElementById('obs-kuat').value.trim();
-                const area = document.getElementById('obs-area').value.trim();
-                
-                if (!kuat || !area) {
-                    alert("Gagal Menyimpan: Catatan Kekuatan dan Area Pengembangan wajib diisi!");
-                    return; 
-                }
-                // ------------------------------------
-
                 const btn = document.getElementById('btn-save-obs');
                 btn.innerText = 'Menyimpan...'; 
                 btn.disabled = true;
@@ -615,8 +588,8 @@
                 
                 const payload = {
                     id: 'O'+Date.now(), guruId: t.id, schedId: sched.id, score,
-                    kuat: kuat,
-                    area: area
+                    kuat: document.getElementById('obs-kuat').value,
+                    area: document.getElementById('obs-area').value
                 };
                 
                 try {
@@ -626,7 +599,7 @@
                     document.getElementById('form-observasi-container').classList.add('hidden');
                     renderUI();
                 } catch (error) {
-                    alert("Gagal menyimpan observasi. Periksa koneksi internet.");
+                    alert("Gagal menyimpan observasi.");
                     console.error(error);
                 } finally {
                     btn.innerText = 'Simpan Observasi'; btn.disabled = false;
@@ -689,17 +662,46 @@
         // --- RIWAYAT ---
         function renderRiwayatAll() {
             const c = document.getElementById('riwayat-container');
-            let list = currentUser.role === 'kepsek' ? data.observations : data.observations.filter(o => o.guruId == currentUser.id);
+            const isKepsek = currentUser.role === 'kepsek';
+            let list = isKepsek ? data.observations : data.observations.filter(o => o.guruId == currentUser.id);
             
             if (list.length === 0) { c.innerHTML = '<div class="card"><p>Belum ada riwayat.</p></div>'; return; }
             
-            // Perbaikan: Angka "/ 52" dihapus agar skor lebih dinamis mengikuti jumlah DPL yang dipilih
-            let html = '<div class="card"><div class="table-responsive"><table class="table"><thead><tr><th>Guru</th><th>Total Skor</th><th>Kekuatan</th></tr></thead><tbody>';
+            // Tambahkan header Aksi jika user adalah kepsek
+            let html = '<div class="card"><div class="table-responsive"><table class="table"><thead><tr><th>Guru</th><th>Skor PM</th><th>Kekuatan</th>' + (isKepsek ? '<th>Aksi</th>' : '') + '</tr></thead><tbody>';
+            
             list.forEach(o => {
                 const t = data.teachers.find(x => x.id == o.guruId);
-                html += `<tr><td>${t?t.nama:'?'}</td><td>${o.score}</td><td>${o.kuat}</td></tr>`;
+                // Tambahkan tombol edit jika user adalah kepsek
+                let actionBtn = isKepsek ? `<td><button onclick="editRiwayat('${o.id}')" class="btn btn-sm btn-primary">Edit</button></td>` : '';
+                html += `<tr><td>${t?t.nama:'?'}</td><td>${o.score} / 52</td><td>${o.kuat}</td>${actionBtn}</tr>`;
             });
             c.innerHTML = html + '</tbody></table></div></div>';
+        }
+
+        async function editRiwayat(id) {
+            const obs = data.observations.find(o => o.id === id);
+            if (!obs) return;
+
+            const newKuat = prompt("Perbaiki Catatan Kekuatan:", obs.kuat);
+            if (newKuat === null) return; // Batal edit
+            
+            const newArea = prompt("Perbaiki Area Pengembangan:", obs.area);
+            if (newArea === null) return; // Batal edit
+
+            document.getElementById('loading').style.display = 'flex';
+            try {
+                // Pastikan Anda menambahkan logika 'editObservation' di Google Apps Script Anda
+                const payload = { id: id, kuat: newKuat, area: newArea };
+                const res = await fetchAPI('editObservation', payload);
+                data = res;
+                alert("Riwayat berhasil diperbarui!");
+                renderUI(); 
+            } catch (e) {
+                alert("Gagal mengupdate riwayat observasi.");
+                console.error(e);
+            }
+            document.getElementById('loading').style.display = 'none';
         }
     </script>
 </body>
